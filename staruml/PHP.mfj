@@ -1,0 +1,47 @@
+{
+	"_type": "UMLProfile",
+	"_id": "AAAAAAFW5k1xd5g1apo=",
+	"_parent": {
+		"$ref": "AAAAAAFElm5XMFNoGY0="
+	},
+	"name": "PHP",
+	"ownedElements": [
+		{
+			"_type": "UMLStereotype",
+			"_id": "AAAAAAFW5k3yF5g5prY=",
+			"_parent": {
+				"$ref": "AAAAAAFW5k1xd5g1apo="
+			},
+			"name": "PHP",
+			"tags": [
+				{
+					"_type": "Tag",
+					"_id": "AAAAAAFW5k9PD5hCL9U=",
+					"_parent": {
+						"$ref": "AAAAAAFW5k3yF5g5prY="
+					},
+					"name": "BaseName",
+					"kind": "string",
+					"checked": true,
+					"number": 0
+				}
+			],
+			"visibility": "public",
+			"isAbstract": false,
+			"isFinalSpecialization": false,
+			"isLeaf": false,
+			"isActive": true,
+			"icon": {
+				"_type": "UMLImage",
+				"_id": "AAAAAAFW5k3yF5g63pE=",
+				"_parent": {
+					"$ref": "AAAAAAFW5k3yF5g5prY="
+				},
+				"visibility": "public",
+				"width": 40,
+				"height": 40
+			}
+		}
+	],
+	"visibility": "public"
+}
