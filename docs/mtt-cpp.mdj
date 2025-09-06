@@ -1,0 +1,36 @@
+{
+	"_type": "Project",
+	"_id": "AAAAAAFF+h6SjaM2Hec=",
+	"name": "mtt-cpp",
+	"ownedElements": [
+		{
+			"_type": "UMLModel",
+			"_id": "AAAAAAFF+qBWK6M3Z8Y=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Model",
+			"ownedElements": [
+				{
+					"_type": "UMLPackage",
+					"_id": "AAAAAAGZHdhJhZaPKNE=",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Architecture"
+				},
+				{
+					"_type": "UMLPackage",
+					"_id": "AAAAAAGZHdhulJaT6/k=",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "User Manual"
+				}
+			]
+		}
+	],
+	"documentation": "This model contains architectural and user manual parts.\nCan be split later.",
+	"author": "Hans-Juergen Lange",
+	"documentVersion": 1
+}
