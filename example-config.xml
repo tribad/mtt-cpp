@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mtt-cpp>
+    <model path="./staruml.mdj"/>
+    <cxx>
+        <fileheader><![CDATA[// *******************************************************************************************************
+//
+//  Modul-Name     : $modul$$extension$
+//  Author(s)      : $author$
+//
+//  Copyrights $year$ by 'Hans-Jürgen Lange' <hjl@simulated-universe.de>. All rights reserved.
+//
+// *******************************************************************************************************
+]]></fileheader>
+        <codestyle>
+            <namespace inSource="true"/>
+            <class     ruleoffive="true"/>
+            <headerfiles selfcontained="true"/>
+        </codestyle>
+    </cxx>
+    <cmake>
+
+    </cmake>
+    <gnu-make>
+
+    </gnu-make>
+
+</mtt-cpp>
