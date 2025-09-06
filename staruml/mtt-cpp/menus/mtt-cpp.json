@@ -1,0 +1,14 @@
+{
+  "menu": [
+    {
+      "id": "tools",
+      "submenu": [
+        {
+          "label": "MTT-CPP",
+          "id": "tool.mttcpp",
+          "command": "mttcpp:run_mttcpp"
+        }
+      ]
+    }
+  ]
+}
