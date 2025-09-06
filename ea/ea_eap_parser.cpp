@@ -1241,7 +1241,7 @@ static void ea_eap_load_attributes(std::shared_ptr<MModel> aModel) {
                             if (parent->IsClassBased()) {
                                 auto c = std::dynamic_pointer_cast<MClass>(parent);
 
-                                c->Add(attr);
+                                c->AddAttribute(attr);
                             }
 
                         }

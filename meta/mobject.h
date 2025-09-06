@@ -30,11 +30,11 @@ public:
     MObject();
     MObject(const std::string&aId, std::shared_ptr<MElement> aParent = nullptr);
     static std::shared_ptr<MObject> construct(const std::string&aId, std::shared_ptr<MStereotype> aStereotype, std::shared_ptr<MElement> aParent = nullptr);
-    void Add(std::shared_ptr<MAttribute> a) {
+    void AddAttribute(std::shared_ptr<MAttribute> a) {
         Slots.emplace_back(a);
         owned.emplace_back(a);
     };
-    void Add(std::shared_ptr<MLink> l) {
+    void AddLink(std::shared_ptr<MLink> l) {
         Links.emplace_back(l);
         owned.emplace_back(l);
     };

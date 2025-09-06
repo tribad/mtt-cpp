@@ -45,8 +45,8 @@ public:
     MClass(const std::string&aId, std::shared_ptr<MElement> aParent);
     static std::shared_ptr<MClass> construct(const std::string&aId, std::shared_ptr<MStereotype> aStereotype, std::shared_ptr<MElement> aParent = nullptr);
     static std::shared_ptr<MClass> construct(const std::string&aId, std::string aPackageType, std::shared_ptr<MElement> aParent = nullptr);
-    void Add(std::shared_ptr<MAssociation> a);
-    inline void Add(std::shared_ptr<MAttribute> a);
+    void AddAssoc(std::shared_ptr<MAssociation> a);
+    inline void AddAttribute(std::shared_ptr<MAttribute> a);
     inline std::string getTypeName();
     eElementType getPackageType();
     std::string GetDefaultStereotype();
@@ -83,7 +83,7 @@ public:
 };
 
 
-inline void MClass::Add(std::shared_ptr<MAttribute> a) {
+inline void MClass::AddAttribute(std::shared_ptr<MAttribute> a) {
     Attribute.emplace_back(a);
 }
 

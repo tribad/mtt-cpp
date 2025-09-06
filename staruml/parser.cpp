@@ -1134,7 +1134,7 @@ void fillobject(std::shared_ptr<MObject> o, tJSONObject *j) {
                 auto newlink = MLink::construct(id, o);
 
                 fillassoc(newlink, (tJSONObject*)(*i));
-                o->Add(newlink);
+                o->AddLink(newlink);
             }
         }
     }
@@ -1150,7 +1150,7 @@ void fillobject(std::shared_ptr<MObject> o, tJSONObject *j) {
                 auto newattr = MAttribute::construct(id, o);
 
                 fillslot(newattr, (tJSONObject*)(*i));
-                o->Add(newattr);
+                o->AddAttribute(newattr);
             }
         }
     }
@@ -1248,7 +1248,7 @@ void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
                 auto newattr = MAttribute::construct(id, c);
 
                 fillattribute(newattr, (tJSONObject*)(*i));
-                c->Add(newattr);
+                c->AddAttribute(newattr);
             } else if (o_type == "UMLDependency") {
                 std::string stname = getstereotype((tJSONObject*)(*i));
                 auto stereotype = model->StereotypeById(stname);
@@ -1380,7 +1380,7 @@ void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
                 auto newattr=MAttribute::construct(id, c);
 
                 fillattribute(newattr, (tJSONObject*)(*i));
-                c->Add(newattr);
+                c->AddAttribute(newattr);
             }
         }
     }
@@ -1398,7 +1398,7 @@ void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
                 auto newattr=MAttribute::construct(id, c);
 
                 fillattribute(newattr, (tJSONObject*)(*i));
-                c->Add(newattr);
+                c->AddAttribute(newattr);
             }
         }
     }

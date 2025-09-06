@@ -46,7 +46,7 @@ std::shared_ptr<MClass> MClass::construct(const std::string&aId, std::string aPa
     return CClassBase::construct (aId, aPackageType, aParent);
 }
 
-void MClass::Add(std::shared_ptr<MAssociation> a)
+void MClass::AddAssoc(std::shared_ptr<MAssociation> a)
 {
     if ((!a->ThisEnd(id)) || (!a->OtherEnd(id))) {
         return;
