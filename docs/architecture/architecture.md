@@ -2,8 +2,9 @@
 
 The architecture should reflect some major requirements.
 
- * Useable with various UML modelers
+ * Usable with various UML modelers through different input-parsers.
  * Generation of almost any text content from the models
+ * Configurable in some parts.
 
 ## Overall Structure
 
