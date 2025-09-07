@@ -56,6 +56,8 @@ The java generator is not part of the code base. But I know that a friend of min
 Here we start with the manual. All examples are based on a StarUML model. As UML :registered: is somewhat a standard you will find similar
 behaviour for the Enterprise Architect as well.
 
+As I do not know better I will start to explain things along the model elements, classes, packages, and the like.
+
 ### General approach
 To generate files from a UML model you deal with two different ways to make things visible to the generator.
 
@@ -77,6 +79,33 @@ Tagged values are simple name value pair that can be attached to a model element
 world of the model to the real world.
 
 These are extensively used with generator, because that's his purpose, transfer the abstract model into the real world.
+
+### Packages
+Packages are like directories in file system browsers. They structure the model and you can put any other model element
+into packages if you see fit to it. They need not be aligned to your directory structure but will mostly reflect your
+desired directory structure while generating the files.
+
+The generator will look out for the following stereotypes attached to packages.
+
+* library
+* application
+* wxapp
+* simulation or model
+* extern or system
+* subsystem
+* httpifc
+* module
+* jscript
+* php
+
+Even if have not attached a stereotype to any of your packages the generator will start create files if he identifies
+model elements that he can create. But than they may be created in places where you did not expect it and no supporting
+files, like makefiles are created.
+
+#### library
+
+### Classes
+
 
 
 
