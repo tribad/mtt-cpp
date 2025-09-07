@@ -8,8 +8,10 @@ It is capable of reading in models from
 
 and can possibly extended to read in UML2 models from other modelers as well.
 
-While the StarUML modeler uses only a single file in JSON format the EA uses an access database file for local models and supports a variety of SQL server for shared repositories.
-The generator is ready to use ODBC data sources on Windows OSs and OLEDB providers as well. For shared repositories the use of an MSSQL server through the OLE provider has been checked and it works.
+While the StarUML modeler uses only a single file in JSON format the EA uses an access database file for local models and 
+supports a variety of SQL server for shared repositories.
+The generator is ready to use ODBC data sources on Windows OSs and OLEDB providers as well. 
+For shared repositories the use of an MSSQL server through the OLE provider has been checked and it works.
 
 ## Current Generated Output
 The generator produces:
@@ -39,7 +41,8 @@ The generator produces only the skeletons for the classes. So the developer only
 A merger stage is embedded that merges existing code into newly generated skeletons.
 Leftovers are put as comment to the end of the file.
 
-Some parts of the formatting is configurable through a configuration file. It will be an ongoing efforts to extend the configurable features.
+Some parts of the formatting is configurable through a configuration file. It will be an ongoing efforts to extend the 
+configurable features.
 
 While Makefiles are generated as well no cmake support is integrated.
 
@@ -55,6 +58,15 @@ While building on a linux system the only dependencies are
 
 The access to the enterprise architect local files on Linux is realized through the mdbtools.
 
-No library has been integrated but the "mdb-export" command from the mdbtools is used to read-in the data from the access database files.
+No library has been integrated but the "mdb-export" command from the mdbtools is used to read-in the data from the access 
+database files.
 
-While building on a windows system no specific libraries are needed as everything needed is part of a typical OS installation and the build environment. (AFAIK).
+While building on a windows system no specific libraries are needed as everything needed is part of a typical OS 
+installation and the build environment. (AFAIK).
+
+# Documentation
+I am working on two documents.
+
+* [Architecture](docs/architecture/architecture.md)
+* [User Manual](docs/user/manual.md)
+
