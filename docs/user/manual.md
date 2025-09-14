@@ -53,7 +53,7 @@ interface type in its internal model.
 The java generator is not part of the code base. But I know that a friend of mine created Java generator classes and it worked.
 
 ## The manual
-Here we start with the manual. All examples are based on a StarUML model. As UML :registered: is somewhat a standard you will find similar
+Here we start with the manual. All examples are based on a StarUML model. As UML:registered: is somewhat a standard you will find similar
 behaviour for the Enterprise Architect as well.
 
 As I do not know better I will start to explain things along the model elements, classes, packages, and the like.
@@ -90,19 +90,80 @@ The generator will look out for the following stereotypes attached to packages.
 * library
 * application
 * wxapp
-* simulation or model
 * extern or system
 * subsystem
-* httpifc
 * module
 * jscript
 * php
+* simulation or model
+* httpifc
 
 Even if have not attached a stereotype to any of your packages the generator will start create files if he identifies
 model elements that he can create. But than they may be created in places where you did not expect it and no supporting
 files, like makefiles are created.
 
 #### library
+The library stereotype is used for packages that assemble into a library. Add this point it is not determined if it is a static
+or dynamic library. 
+
+For this package a makefile will be created that creates both of the library types. All model elements below are incorporated 
+in the library if they can be build with a C++ compiler. It's strict C/C++ related.
+
+For the library package a directory is generated. If no tagged value "directory" is set the name of the package will be used.
+
+##### Tagged Values
+
+* directory     - subdirectory where all generated artifacts are stored into. If this is not set the name of the package is used.
+* outputname    - the base name of the library files
+* extrainclude  - List of include filenames, including the extension, that are used for all C/C++ files generated
+* outputpath    - I do not know ;)
+* namespace     - The namespace for the types/classes below the package
+* CxxFlags      - Some additional compiler flags to use while building
+* LibPath       - Some library search path on linking
+
+#### application
+The application stereotype is used for packages that assemble into an application. All model elements below this package 
+are incorporated into an application/executable. For this package a makefile will be created. It's strict C/C++ related. 
+
+##### Tagged Values
+* directory - subdirectory where all generated artifacts are stored into.  If this is not set the name of the package is used.
+* outputname - name of the application
+* extrainclude  - List of include filenames, including the extension, that are used for all C/C++ files generated
+* outputpath    - I do not know ;)
+* namespace     - The namespace for the types/classes below the package
+* CxxFlages - Some additional compiler flags to use while compiling
+* LdFlags   - Some additional linker flags to use while linking
+* LibPath       - Some library search path on linking
+ 
+#### wxapp
+A wxapp is used for WxWidgets application. It is an extension of the application type package but has some special 
+parameters to the generated makefile that helps determine the parameters for building the app.
+
+##### Tagged Values
+Same as application.
+
+#### extern/system
+These packages are used for system libraries. This way its easier to incorporate framework libraries with their classes 
+and types into the model. All classes defined in such a package are handled as they have a extern stereotype as well.
+Simple Packages with a namespace tagged value can be used to manage namespaces below an extern package.
+
+##### Tagged Value
+
+It shares most of the library package tagged values.
+
+#### simulation/model
+The simulation/model package is a special package meant to be used in conjunction with the 
+[simulation-core](https://github.com/tribad/simulation-core) it generates makefiles to create a special library package
+that can than be loaded at runtime into the simulation-core.
+
+##### Tagged Values
+As the simulation/model is loaded as a library it uses the same tagged values as the library package plus some specials
+
+* simulationname/modelname - It is used as the output name. If the tagged value outputname is set as well, it is overwriten with the simulationname/modelname
+* AppCoreVersion - It is set on the UML-Model level and used in these simulation/model package for the makefiles.
+
+
+
 
 ### Classes
 
