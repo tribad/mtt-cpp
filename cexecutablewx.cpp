@@ -93,7 +93,7 @@ void CExecutableWx::Dump(std::shared_ptr<MModel> model) {
     makefile << "CXXFLAGS+=$(shell wx-config --debug=yes --cxxflags) -std=" << m_cxxstandard << " -fPIC -g $(INCLUDEPATH) " << cxxFlags.c_str() << "\n\n";
 
     //
-    //  Find some CXX-Flags to generate into the Makefile.
+    //  Find some Linker-Flags to generate into the Makefile.
     makefile << "LDFLAGS+=$(shell wx-config --debug=yes --libs std,richtext,aui,propgrid) ";
 
     std::string ldFlags;
