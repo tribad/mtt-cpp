@@ -58,6 +58,25 @@ behaviour for the Enterprise Architect as well.
 
 As I do not know better I will start to explain things along the model elements, classes, packages, and the like.
 
+### Command line parameters
+There are only a few simple parameters that can be passed on the commandline.
+Over time there where so many switches introduced that the use of a configuration file was the better approach.
+The command line parameters can appear in any position on the command line.
+
+mtt-cpp <input-file> <options>
+
+The generator will deduce the input parser from the filename extension.
+Options are preceded with a dash. Values to the options can be directly attached or separated by a space.
+
+* -c <config-file-name> : Name of the configuration file.
+* -d <directory-name> : All generated artifacts are generated starting in this directory.
+* -v : Output of version information and copyright notice.
+* -?
+* -h : Both variations give a short help and exit.
+
+### Configuration File
+The configuration file is an XML formatted file.
+
 ### General approach
 To generate files from a UML model you deal with two different ways to make things visible to the generator.
 
