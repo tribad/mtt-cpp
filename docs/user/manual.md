@@ -178,14 +178,56 @@ that can than be loaded at runtime into the simulation-core.
 ##### Tagged Values
 As the simulation/model is loaded as a library it uses the same tagged values as the library package plus some specials
 
-* simulationname/modelname - It is used as the output name. If the tagged value outputname is set as well, it is overwriten with the simulationname/modelname
+* simulationname/modelname - It is used as the output name. If the tagged value outputname is set as well, it is overwritten with the simulationname/modelname
 * AppCoreVersion - It is set on the UML-Model level and used in these simulation/model package for the makefiles.
-
-
-
 
 ### Classes
 
+Classes can be used whenever you have to design something that has attributes and/or operations defined.
+To distinguish between different specific meanings what this class represents, you have stereotypes to clarify what is holding these attributes and/or operations.
 
+The generator will look out for the following stereotypes attached to packages.
+
+C/C++ specific
+* cxx
+* c
+* struct
+* union
+* moduleclass
+
+Auxiliary stereotypes
+* enumeration
+* interface
+* extern
+* signal
+* primitivetype
+* dataType
+
+Framework specific
+* qt
+* wxform
+
+Alternate language support
+* jscript
+* php
+
+Serializer specific
+* json
+* tlv
+* protobuf
+
+Application Core
+* modelitem
+* modelenum
+
+Simulation Core
+* simobject 
+* simenumerator
+* simstruct
+* simmessage
+* simsignal
+
+Integrated WebServer
+* htmlpage
 
 
