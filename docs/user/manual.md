@@ -189,14 +189,14 @@ To distinguish between different specific meanings what this class represents, y
 The generator will look out for the following stereotypes attached to packages.
 
 C/C++ specific
-* cxx
-* c
-* struct
-* union
+* Cxx
+* C
+* Struct
+* Union
 * moduleclass
 
 Auxiliary stereotypes
-* enumeration
+* Enumeration
 * interface
 * extern
 * signal
@@ -230,4 +230,133 @@ Simulation Core
 Integrated WebServer
 * htmlpage
 
+
+#### Cxx 
+The generator will create C++ class code fragment.
+A simple example how it looks like. More possibilities are described later.
+
+![Simple Classes Details](images/ClassesDetails.png)
+
+The header file generated
+```
+#pragma once
+#ifndef ACLASS_INC
+#define ACLASS_INC
+//
+//  type aliases
+///
+/// Demonstration of class member attributes and operations.
+///
+class AClass {
+public:
+    ///
+    /// @brief Do something
+    ///
+    /// @param[] param1 An integer
+    /// @return True or False?
+    ///
+    bool APublicMethod(const int param1) noexcept;
+public:
+    int           APublicInt;
+protected:
+    float         AProtectedFloat;
+private:
+    bool          APrivateBool;
+    static double AStaticDouble;
+};
+
+#endif  // ACLASS_INC
+```
+The source file generated.
+```
+#include "AClass.h" // Needed default without path
+// Optional
+double AClass::AStaticDouble;
+///
+/// @brief Do something
+///
+/// @param[] param1 An integer
+/// @return True or False?
+bool AClass::APublicMethod(const int param1) noexcept {
+    bool AReturnType;
+// User-Defined-Code:AAAAAAGb73Hmqx1m4/k=
+// End-Of-UDC:AAAAAAGb73Hmqx1m4/k=
+    return  (AReturnType);
+}
+```
+
+#### C
+The generator will create C code fragment.
+
+#### Struct
+The generator will create C++ struct code fragment.
+
+#### Union
+The generator will create C/C++ union code fragment. The use of unions should be limited to C code only as for C++ there are more safe methods to achieve the same result.
+
+#### moduleclass
+This is some a class that creates a single source and header file for multiple class definitions. In case you think you need it.
+
+#### Enumeration
+In the Enterprise Architect models it is not possible to derive from enumerations. So to allow even this, this stereotype is used.
+It does not change the generated code, as in the generator it is the same, as the UML-enumeration stereotype.
+
+#### interface
+I don't know why I introduced this. Probably because one of the supported modellers has some restrictions on how to use UML interfaces.
+
+#### extern
+Everything that is not part of the model but is used or needed for the generator to create the correct result, should have the extern stereotype.
+This is helpful to define standard classes/types/template to be used in the model for generation purposes.
+
+#### signal
+#### primitivetype
+#### dataType
+
+#### qt
+Qt has some special requirements how classes need derive Qt classes. The generator will produce class definitions that match these requirements.
+
+#### wxform
+WxWidget forms generated with the wxformbuilder. This informs the generator that a class is generated out of the wxformbuilder.
+
+#### jscript
+Incomplete jscript generator. 
+#### php
+Incomplete php generator.
+
+#### json
+This has something todo with the serialization of object content. But could not remember. Will be described later.
+Objects are (de-) serialized in json format.
+#### tlv
+This has something todo with the serialization of object content. But could not remember. Will be described later.
+Objects are (de-) serialized in a binary tlv (type-length-value) format.
+
+#### protobuf
+This has something todo with the serialization of object content. But could not remember. Will be described later.
+Objects are (de-) serialized protobuf descriptions.
+
+#### modelitem
+This is alternate stereotype for 'simobject'. It can be used if the application/simulation core is used for simple applications, not for a simulation.
+Makes things more clear to the diagram reader.
+
+#### modelenum
+This is alternate stereotype for 'simenumerator'. It can be used if the application/simulation core is used for simple applications, not for a simulation.
+Makes things more clear to the diagram reader.
+
+#### simobject
+The generator will create special code fragments used in the application/simulation core.
+
+#### simenumerator
+The generator will create special code fragments used in the application/simulation core.
+
+#### simstruct
+The generator will create special code fragments used in the application/simulation core.
+
+#### simmessage
+The generator will create special code fragments used in the application/simulation core.
+
+#### simsignal
+The generator will create special code fragments used in the application/simulation core.
+
+#### htmlpage
+The generator will create special code fragments used in the webserver extension in the application/simulation core.
 
