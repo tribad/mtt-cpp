@@ -232,10 +232,10 @@ Integrated WebServer
 
 
 #### Cxx 
-The generator will create C++ class code fragment.
+The generator will create C++ class code fragments.
 A simple example how it looks like. More possibilities are described later.
 
-![Simple Classes Details](images/ClassesDetails.png)
+![Simple Classes Details](images/Cxx-Details.png)
 
 The header file generated
 ```
@@ -257,13 +257,16 @@ public:
     ///
     bool APublicMethod(const int param1) noexcept;
 public:
-    int           APublicInt;
+    int           APublicInt;      // An Integer
 protected:
     float         AProtectedFloat;
 private:
     bool          APrivateBool;
     static double AStaticDouble;
 };
+//
+//  These are the operations defined with package scope.
+void APackageOperation() ;
 
 #endif  // ACLASS_INC
 ```
@@ -272,6 +275,13 @@ The source file generated.
 #include "AClass.h" // Needed default without path
 // Optional
 double AClass::AStaticDouble;
+//
+// This is like a C-Function and why the C-Code generation has been abandoned.
+void APackageOperation() {
+// User-Defined-Code:AAAAAAGb9ArYTRZRnK0=
+// End-Of-UDC:AAAAAAGb9ArYTRZRnK0=
+}
+
 ///
 /// @brief Do something
 ///
@@ -286,16 +296,62 @@ bool AClass::APublicMethod(const int param1) noexcept {
 ```
 
 #### C
-The generator will create C code fragment.
+The generator will create C code fragments.
+It's incomplete for now. 
 
 #### Struct
 The generator will create C++ struct code fragment.
+Classes and structs in C++ only defer in the default visibility of members. In classes it's private and in structs it's public.
+
+![Simple Struct Details](images/Struct-Details.png)
+
+The header file generated:
+```
+#pragma once
+#ifndef CSTRUCT_INC
+#define CSTRUCT_INC
+//
+//  type aliases
+///
+///  TODO: Add class description
+struct CStruct {
+    ///
+    /// @brief TODO
+    ///
+    /// @return
+    ///
+    bool OperationWithDefaultReturn() noexcept;
+    int AttributeWithDefault = 12;
+};
+
+#endif  // CSTRUCT_INC
+```
+The source file generated.
+```
+#include "CStruct.h" // Needed default without path
+// Optional
+///
+/// @brief TODO
+///
+/// @return
+bool CStruct::OperationWithDefaultReturn() noexcept {
+    bool retval = false;
+// User-Defined-Code:AAAAAAGb9BR4KRaMWkU=
+// End-Of-UDC:AAAAAAGb9BR4KRaMWkU=
+    return  (retval);
+}
+
+
+```
 
 #### Union
 The generator will create C/C++ union code fragment. The use of unions should be limited to C code only as for C++ there are more safe methods to achieve the same result.
 
-#### moduleclass
-This is some a class that creates a single source and header file for multiple class definitions. In case you think you need it.
+At the moment it is not working. So I can not show how it looks like.
+
+#### module
+This is a class that creates a single source and header file for multiple class definitions. In case you think you need it.
+The classes/types that need to be generated in this module are enclosed from the module. In the model tree positioned beneath the module class.
 
 #### Enumeration
 In the Enterprise Architect models it is not possible to derive from enumerations. So to allow even this, this stereotype is used.

@@ -20,20 +20,16 @@
 #ifndef CUNION_H
 #define CUNION_H
 
-#include "cclassbase.h"
 
-class CUnion : public CClassBase
+#include "ccxxclass.h"
+
+class CUnion : public CCxxClass
 {
 public:
     CUnion() = default;
-    CUnion(const std::string& aId, std::shared_ptr<MElement> e) : CClassBase(aId, e) {type = eElementType::Union;}
+    CUnion(const std::string& aId, std::shared_ptr<MElement> e) : CCxxClass(aId, e) {type = eElementType::Union;; mClassifierType = "union";}
     ~CUnion() override = default;
-    //
-    //  Virtuals from MElement
-    std::string FQN(void) const override;
-    void SetFromTags(const std::string& name, const std::string&value) override;
-    void Prepare(void) override;
-    void Dump(std::shared_ptr<MModel>aModel) override;
+
 };
 
 #endif // CUNION_H

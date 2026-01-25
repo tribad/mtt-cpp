@@ -1766,7 +1766,7 @@ void CCxxClass::DumpAliases(std::ostream& file, int a_indent, eVisibility a_vis)
 
                                 filler.assign(a_indent, ' ');
                                 bool aliasdumped = false;
-                                if ((u.getElement()->type == eElementType::CxxClass) || (u.getElement()->type == eElementType::Struct)) {
+                                if ((u.getElement()->type == eElementType::CxxClass) || (u.getElement()->type == eElementType::Struct) || (u.getElement()->type == eElementType::Union)) {
                                     auto cc = std::dynamic_pointer_cast<CCxxClass>(u.getElement());
 
                                     if ((cc->isTemplateClass()) && (!u.getConnector()->name.empty())) {
@@ -2648,6 +2648,7 @@ void CCxxClass::DumpClassDecl(std::ostream& file, int indent) {
                 switch (e->type) {
                 case eElementType::CxxClass:
                 case eElementType::Struct:
+                case eElementType::Union:
                     if (dump) {
                         dump = false;
                         file << filler << vi.second << ": // For enclosed class.\n";

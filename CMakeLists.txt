@@ -49,6 +49,7 @@ if (EXISTS "/etc/os-release")
         # Set the variable
         set(${Name} "${Value}")
     endforeach()
+    ##set(CMAKE_CXX_COMPILER "/usr/bin/x86_64-w64-mingw32-g++")
     set(LIBXML_INCLUDE_DIR "/usr/include/libxml2")
     set(LIBXML_LIBRARY_NAME "xml2")
     add_compile_options (-O0 -g -Wall -Wextra -Wno-unused-parameter -std=c++14)

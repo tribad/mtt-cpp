@@ -143,11 +143,11 @@ std::shared_ptr<MClass> CClassBase::construct(const std::string&aId, const std::
         newclass = new CHtmlPageClass(aId, aParent);
     } else if (classtype == "wxform") {
         newclass = new CWxFormsClass(aId, aParent);
-    } else if (classtype == "dataType") {
+    } else if (classtype == "datatype") {
         newclass = new CDataType(aId, aParent);
     } else if (classtype == "interface") {
         newclass = new CInterface(aId, aParent);
-    } else if (classtype == "moduleclass") {
+    } else if ((classtype == "moduleclass") || (classtype == "module")) {
         newclass = new CModuleClass(aId, aParent);
     } else {
         newclass = new CClass(aId, aParent);

@@ -17,8 +17,19 @@
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#include <iostream>
+#include "helper.h"
+#include "mattribute.h"
+#include "cattribute.h"
+#include "massociationend.h"
+#include "cassociationend.h"
+#include "cclassbase.h"
 #include "cunion.h"
 
+#include "mmodel.h"
+#include "cmodel.h"
+
+#if 0
 std::string CUnion::FQN() const {
     return name;
 }
@@ -35,3 +46,5 @@ void CUnion::Prepare(void) {
 void CUnion::Dump(std::shared_ptr<MModel> model) {
     (void) model;
 }
+#endif
+
