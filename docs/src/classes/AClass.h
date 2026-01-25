@@ -16,12 +16,15 @@ public:
     ///
     bool APublicMethod(const int param1) noexcept;
 public:
-    int           APublicInt;
+    int           APublicInt;      // An Integer
 protected:
     float         AProtectedFloat;
 private:
     bool          APrivateBool;
     static double AStaticDouble;
 };
+//
+//  These are the operations defined with package scope.
+void APackageOperation() ;
 
 #endif  // ACLASS_INC

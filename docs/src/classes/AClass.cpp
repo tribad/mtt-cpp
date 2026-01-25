@@ -1,6 +1,13 @@
 #include "AClass.h" // Needed default without path
 // Optional
 double AClass::AStaticDouble;
+//
+// This is like a C-Function and why the C-Code generation has been abandoned.
+void APackageOperation() {
+// User-Defined-Code:AAAAAAGb9ArYTRZRnK0=
+// End-Of-UDC:AAAAAAGb9ArYTRZRnK0=
+}
+
 ///
 /// @brief Do something
 ///
