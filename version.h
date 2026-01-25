@@ -21,6 +21,6 @@
 #ifndef VERSION_INC
 #define VERSION_INC
 
-#define MTT_CPP_VERSION "1.1.9"
+#define MTT_CPP_VERSION "1.1.10"
 
 #endif
