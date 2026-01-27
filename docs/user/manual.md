@@ -315,16 +315,19 @@ The header file generated:
 ///
 ///  TODO: Add class description
 struct CStruct {
+public:
     ///
     /// @brief TODO
     ///
     /// @return
     ///
     bool OperationWithDefaultReturn() noexcept;
+public:
     int AttributeWithDefault = 12;
 };
 
 #endif  // CSTRUCT_INC
+
 ```
 The source file generated.
 ```
@@ -341,13 +344,40 @@ bool CStruct::OperationWithDefaultReturn() noexcept {
     return  (retval);
 }
 
-
 ```
 
 #### Union
 The generator will create C/C++ union code fragment. The use of unions should be limited to C code only as for C++ there are more safe methods to achieve the same result.
 
-At the moment it is not working. So I can not show how it looks like.
+![Simple Union Details](images/Union-Details.png)
+
+The header file generated:
+```
+#pragma once
+#ifndef DUNION_INC
+#define DUNION_INC
+//
+//  type aliases
+///
+///  TODO: Add class description
+union DUnion {
+public:
+    int    A;
+    double B;
+    char   C;
+};
+
+#endif  // DUNION_INC
+
+```
+The source file generated.
+```
+#include "DUnion.h" // Needed default without path
+// Optional
+
+```
+
+
 
 #### module
 This is a class that creates a single source and header file for multiple class definitions. In case you think you need it.
