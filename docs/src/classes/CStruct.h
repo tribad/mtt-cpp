@@ -6,12 +6,14 @@
 ///
 ///  TODO: Add class description
 struct CStruct {
+public:
     ///
     /// @brief TODO
     ///
     /// @return
     ///
     bool OperationWithDefaultReturn() noexcept;
+public:
     int AttributeWithDefault = 12;
 };
 

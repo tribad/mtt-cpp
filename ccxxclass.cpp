@@ -918,12 +918,9 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
             if ((mo->visibility == vi.first) && (!cmo->qtSlot) && (!cmo->qtSignal)) {
                 //
                 // Add the visibility that is valid now but only for classes not for structs.
-                if ((dump) && (type != eElementType::Struct)) {
+                if (dump) {
                     dump=false;
                     hdr << classfiller << vi.second << ":\n";
-                }
-                if ((type == eElementType::Struct) && (mo->visibility != vPublic)) {
-                    std::cerr << "Visibility other than public in structs is not supported. " << mTypeTree.getFQN() << "::" << mo->name << std::endl;
                 }
                 auto op = std::dynamic_pointer_cast<COperation>(*mo);
                 std::string header = op->getHeader(indent);
@@ -1215,23 +1212,32 @@ void CCxxClass::DumpAttributeDecl(std::ostream& hdr, int indent) {
             }
         }
     }
+#if 0
+    //
+    //  This code may be used in the future to allow dumping attributes in the order they are defined.
+    //  Than we would need to add the visibility anytime it changes to the declaration.
+    eVisibility lastVis = eVisibility::vPrivate;
+
+    if ((type == eElementType::Struct) || (type == eElementType::Union))
+    {
+        lastVis = eVisibility::vPublic;
+    }
+#endif
     for (i = 0; i<vis.size(); ++i) {
         std::string filler;
         std::string commentfiller;
 
         dump = true;
         for (auto &li: attrlist[i]) {
-            if ((dump) && (type != eElementType::Struct)) {
+            //
+            //  Add the visibility at the first change
+            if (dump)
+            {
                 dump = false;
                 hdr << classfiller << vis[i].second << ":\n";
             }
-            if ((type == eElementType::Struct) && (i != 0)) {
-                std::cerr << "Visibility other than public in structs is not supported. " << mTypeTree.getFQN() << "::" << std::get<1>(li) << std::endl;
-            }
 
             auto e = std::get<2>(li)->GetComment();
-          
-
 
             if (e.size() > 1) {
                 hdr << "    //\n";
