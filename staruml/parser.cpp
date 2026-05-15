@@ -1242,7 +1242,7 @@ void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
                 auto newassoc = MAssociation::construct(id, c);
 
                 fillassoc(newassoc, (tJSONObject*)(*i));
-                c->Add(newassoc);
+                c->AddAssoc(newassoc);
                 model->Add(newassoc);
             } else if (o_type == "UMLAttribute") {
                 auto newattr = MAttribute::construct(id, c);
@@ -1312,6 +1312,9 @@ void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
                 std::string stype;
 
                 if (stereotype) {
+                    if (stereotype->name == "QtDesigner") {
+                        std::cerr << "Got QTDesigned\n";
+                    }
                     newclass = MClass::construct(id, stereotype, c);
                 } else {
                     stype = c->GetDefaultStereotype();
@@ -1667,6 +1670,7 @@ std::shared_ptr<MModel> staruml_modelparser(const char* filename, const char* di
             //  of the model.
             nodelist = findbytype(root, "UMLStereotype");
             for (auto & i : nodelist) {
+
                 auto newstereotype = MStereotype::construct(getstringattr((tJSONObject*)(i), "name"), getstringattr((tJSONObject*)(i), "_id"));
                 model->Add(newstereotype);
             }
