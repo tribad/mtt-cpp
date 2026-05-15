@@ -1263,7 +1263,8 @@ void CCxxClass::DumpPackageAttributeDecl(std::ostream& hdr) {
             std::ostringstream tname;
 
             if (a->Classifier) {
-                cname = a->Classifier->FQN();
+                auto cb = std::dynamic_pointer_cast<CClassBase>(*a->Classifier);
+                cname = cb->mTypeTree.getFQN();
             } else {
                 cname = a->ClassifierName;
             }
@@ -1297,7 +1298,8 @@ void CCxxClass::DumpPackageAttributeDecl(std::ostream& hdr) {
             if (a->Classifier->type == eElementType::SimObject) {
                 cname = "tSimObj";
             } else {
-                cname = a->Classifier->FQN();
+                auto cb = std::dynamic_pointer_cast<CClassBase>(*a->Classifier);
+                cname = cb->mTypeTree.getFQN();
             }
             //
             //  ends[0] in OtherEnd
@@ -1419,7 +1421,8 @@ void CCxxClass::DumpPackageAttributeDefinition(std::ostream& hdr) {
                 hdr << "const ";
             }
             if (a->Classifier) {
-                cname = a->Classifier->FQN();
+                auto cb = std::dynamic_pointer_cast<CClassBase>(*a->Classifier);
+                cname = cb->mTypeTree.getFQN();
             } else {
                 cname = a->ClassifierName;
             }
@@ -1461,7 +1464,8 @@ void CCxxClass::DumpPackageAttributeDefinition(std::ostream& hdr) {
             if (a->Classifier->type == eElementType::SimObject) {
                 cname = "tSimObj";
             } else {
-                cname = a->Classifier->FQN();
+                auto cb = std::dynamic_pointer_cast<CClassBase>(*a->Classifier);
+                cname = cb->mTypeTree.getFQN();
             }
             auto pe0 = std::dynamic_pointer_cast<CAssociation>(*a->parent)->ends[0];
             auto pe1 = std::dynamic_pointer_cast<CAssociation>(*a->parent)->ends[1];
