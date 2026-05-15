@@ -229,6 +229,16 @@ std::string MElement::GetTaggedValue(const std::string& aName) const {
 }
 
 void MElement::Add(std::shared_ptr<MElement> aElement) {
+    //
+    //  Check if element is already part of the owned.
+    for (auto const& oe : owned) {
+        //
+        //  If its already there, abort early.
+        if (oe->id == aElement->id) {
+            return;
+        }
+    }
+
     if (aElement->mPosition != -1) {
         //
         //  Check for quick append.
