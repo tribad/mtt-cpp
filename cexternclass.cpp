@@ -33,7 +33,16 @@ std::string CExternClass::FQN() const {
 }
 
 void CExternClass::Prepare(void) {
-    PrepareBase();
+    if (!PrepDone) {
+        if (HasStereotype("qtdesigner")) {
+            AddTag("ExtraInclude", "ui_" + name + ".h");
+        }
+        PrepareBase();
+        if (HasStereotype("qtdesigner")) {
+            mNameSpace = NameSpace("Ui");
+        }
+        PrepDone = true;
+    }
 }
 
 void CExternClass::Dump(std::shared_ptr<MModel> model) {

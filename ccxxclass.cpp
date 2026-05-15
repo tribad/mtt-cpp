@@ -1073,9 +1073,6 @@ void CCxxClass::DumpAttributeDecl(std::ostream& hdr, int indent) {
                     auto cb = std::dynamic_pointer_cast<CClassBase>(*a->Classifier);
 
                     cname = cb->mTypeTree.getFQN();
-                    if (a->Classifier->HasStereotype("QtDesigner")) {
-                        cname.append("Ui::");
-                    }
                 } else {
                     TypeNode tmptree(TypeNode::parse(a->ClassifierName));
 
@@ -1136,10 +1133,6 @@ void CCxxClass::DumpAttributeDecl(std::ostream& hdr, int indent) {
                     std::string cname = std::dynamic_pointer_cast<CClassBase>(*a->Classifier)->mTypeTree.getFQN();
 
                     cname = mNameSpace.diff(cname);
-
-                    if (a->Classifier->HasStereotype("QtDesigner")) {
-                        cname.append("Ui::");
-                    }
 
                     if (oe->Aggregation == aShared) {
                         cname.push_back('*');

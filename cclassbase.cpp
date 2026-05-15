@@ -129,7 +129,7 @@ std::shared_ptr<MClass> CClassBase::construct(const std::string&aId, const std::
         newclass = new CUnion(aId, aParent);
     } else if (classtype == "qt") {
         newclass = new CQtClass(aId, aParent);
-    } else if (classtype == "extern") {
+    } else if ((classtype == "extern") || (classtype == "qtdesigner")) {
         newclass = new CExternClass(aId, aParent);
     } else if (classtype == "jscript") {
         newclass = new CJSClass(aId, aParent);
