@@ -18,11 +18,42 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#include <sstream>
 #include "helper.h"
 #include "configparser.h"
 #include "main.h"
 
 extern std::string directory;
+
+static std::string trimCxxFileHeader(std::string aHeader) {
+    //
+    //  The lines shall start in column zero.
+    //  As we have a multiline string here we need to split the string into lines and than
+    //  trim each line.
+    std::istringstream iss(aHeader);
+    //
+    //  For the output we stream the result into an ostringstream. Its easier. To handle but
+    //  needs more processing time.
+    std::ostringstream oss;
+    //
+    //  Loop over the lines in the aHeader.
+    do {
+        std::string theline;
+        //
+        //  Extracting a single line until end-of-stream or newline.
+        std::getline(iss, theline);
+        //
+        //  Trim the line. No whitespace characters in front anymore.
+        theline = helper::trim(theline);
+        //
+        //  If the line is not empty we put the line back into our return value.
+        if (!theline.empty()) {
+            oss << theline << std::endl;
+        }
+    } while (iss.good());
+
+    return oss.str();
+}
 
 bool loadModelConfiguration(std::shared_ptr<MttXmlNode> docRoot) {
     bool success = false;
@@ -54,7 +85,7 @@ static bool loadCxxFileHeader(std::shared_ptr<MttXmlNode> aCxxFileHeader) {
     bool success = false;
 
     if (aCxxFileHeader) {
-        gCxxFileHeader  = aCxxFileHeader->content();
+        gCxxFileHeader  = trimCxxFileHeader(aCxxFileHeader->content());
         success         = true;
     }
     return success;
@@ -64,7 +95,7 @@ static bool loadCxxHppFileHeader(std::shared_ptr<MttXmlNode> aCxxHppFileHeader) 
     bool success = false;
 
     if (aCxxHppFileHeader) {
-        gCxxHppFileHeader  = aCxxHppFileHeader->content();
+        gCxxHppFileHeader  = trimCxxFileHeader(aCxxHppFileHeader->content());
         success         = true;
     }
     return success;
@@ -73,7 +104,7 @@ static bool loadCxxHFileHeader(std::shared_ptr<MttXmlNode> aCxxHFileHeader) {
     bool success = false;
 
     if (aCxxHFileHeader) {
-        gCxxHFileHeader  = aCxxHFileHeader->content();
+        gCxxHFileHeader  = trimCxxFileHeader(aCxxHFileHeader->content());
         success         = true;
     }
     return success;
@@ -82,7 +113,7 @@ static bool loadCxxCppFileHeader(std::shared_ptr<MttXmlNode> aCxxCppFileHeader) 
     bool success = false;
 
     if (aCxxCppFileHeader) {
-        gCxxCppFileHeader  = aCxxCppFileHeader->content();
+        gCxxCppFileHeader  = trimCxxFileHeader(aCxxCppFileHeader->content());
         success         = true;
     }
     return success;
