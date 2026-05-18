@@ -619,6 +619,13 @@ void fillparameter(std::shared_ptr<MParameter> p, tJSONObject *j) {
     p->Direction      = getstringattr(j, "direction");
     p->isReadOnly     = getboolean(j, "isReadOnly");
     //
+    //  The default direction is "in". If the direction is not set in the model
+    //  we use the default and set it to "in".
+    if (p->Direction.empty()) {
+        p->Direction = "in";
+    }
+
+    //
     //  get the classifier reference if one is there.
     //  Taking the type name if not.
     std::string ref = getreference(j, "type");

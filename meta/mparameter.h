@@ -35,7 +35,7 @@ public:
     static std::map<std::string, std::shared_ptr<MParameter>> Instances;
     std::string                               defaultValue;
     std::string                               Multiplicity;
-    std::string                               Direction;
+    std::string                               Direction = "in";
     bool                                      isReadOnly;
     bool                                      isLeaf;
     std::string                               ClassifierName;
