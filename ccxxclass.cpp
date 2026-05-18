@@ -927,7 +927,7 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                 std::string pdecl  = op->GetParameterDecl(mNameSpace);
                 std::string filler;
                 filler.assign(indent + IndentSize, ' ');
-                hdr << header << filler << "///" <<  std::endl;
+                hdr << header << filler << gDoxygenCommentStart <<  std::endl;
 
                 if (op->isTemplateOperation()) {
                     op->DumpTemplateOperationPrefix(hdr, false, indent + IndentSize);
@@ -2203,7 +2203,7 @@ void CCxxClass::Dump(std::shared_ptr<MModel> model) {
             dump = true;
             DumpNeededIncludes(src, shared_this(), donelist, oplist);
         }
-        src << "// Optional\n";
+        // src << "// Optional\n";
         oplist.clear();
         DumpOptionalIncludes(src, shared_this(), donelist, oplist);
         //
@@ -2608,13 +2608,13 @@ void CCxxClass::DumpClassDecl(std::ostream& file, int indent) {
 
     //
     //  Dump the usings.
-    file << filler << "//\n" << filler << "//  type aliases\n";
+//    file << filler << "//\n" << filler << "//  type aliases\n";
     DumpAliases(hdr, indent);
 
     if (comment.empty()) {
-        file << filler << "///\n" << filler << "///  TODO: Add class description\n";
+        file << filler << gDoxygenCommentStart << std::endl << filler << gDoxygenCommentStart << "  TODO: Add class description\n";
     } else {
-        DumpComment(file, indent, 120, "///", "///", "///");
+        DumpComment(file, indent, 120, gDoxygenCommentStart, gDoxygenCommentStart, gDoxygenCommentStart);
     }
     //
     //  Dump the template prefix if this is a template class.

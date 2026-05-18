@@ -1136,7 +1136,7 @@ void CClassBase::DumpNeededIncludes(std::ostream &src, std::shared_ptr<CClassBas
                         pp = n + ".h";
 
                         if (aDoneIncludes.find(pp) == aDoneIncludes.end()) {
-                            src << "#include \"" << pp <<"\" // Needed default without path\n";
+                            src << "#include \"" << pp <<"\"\n"; // Needed default without path\n";
                             aDoneIncludes.insert(pp);
                         }
                     } else {
@@ -1144,7 +1144,7 @@ void CClassBase::DumpNeededIncludes(std::ostream &src, std::shared_ptr<CClassBas
                         std::string tmps = tmp;
 
                         if (aDoneIncludes.find(tmps) == aDoneIncludes.end()) {
-                            src << "#include \"" << tmps << "\" // Needed default \n";
+                            src << "#include \"" << tmps << "\"\n";  // Needed default \n";
                             aDoneIncludes.insert(tmps);
                         }
                     }

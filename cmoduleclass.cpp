@@ -2516,7 +2516,7 @@ void CModuleClass::DumpClassDecl(std::ostream& file, int indent) {
     filler.assign(localindent, ' ');
     //
     //  Dump the usings.
-    file << filler << "//\n" << filler << "//  type aliases\n";
+    // file << filler << "//\n" << filler << "//  type aliases\n";
     DumpAliases(file, localindent);
     if (comment.empty()) {
         file << filler << "///\n" << filler << "///  TODO: Add class description\n";
