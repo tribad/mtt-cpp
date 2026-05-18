@@ -774,7 +774,7 @@ std::string COperation::getSourceHeader(int indent) {
     std::string filler;
     filler.assign(indent, ' ');
 
-    oss << filler << "///\n";
+    oss << filler << gDoxygenCommentStart << std::endl;
     if (comment.empty()) {
         oss << filler << gDoxygenCommentStart << " @brief TODO\n";
     }
