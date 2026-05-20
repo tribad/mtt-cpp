@@ -41,10 +41,12 @@ public:
     virtual void Dump(void);
     //
     void Merge(void);
-    void Merge(const std::string& gfile, const std::string& ofile, const std::string& lname, const std::string& comment);
+    void Merge(const std::string& gfile, const std::string& ofile, const std::string& lname, const std::string& comment,
+                   const std::string& id, const std::string& filetype);
     void MergeSysHeader(const std::string& gfile, const std::string& ofile, const std::string& comment, const std::string& a_id);
     void LoadLastGeneratedFiles(void);
     void DumpGeneratedFiles(void);
+    void DumpLeftovers(void);
 public:
     std::list<std::string>            pathstack;
     std::list< tGenFile >             generatedfiles;

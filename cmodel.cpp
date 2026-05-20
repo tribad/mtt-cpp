@@ -30,6 +30,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "helper.h"
 #include "path.h"
 #include "main.h"
@@ -52,6 +53,14 @@
 #include "cmodel.h"
 
 #include "cclassbase.h"
+#include "systemtime.h"
+
+//
+//  These are global as these maps hold the content of all old generated files.
+std::map<std::string, std::list <std::string> > mods; // Mods by tag from original file.
+std::map<std::string, std::list<std::string> >  olist; // List of lines from original files without modifiable parts per id.
+
+
 
 CModel::CModel()
 {
@@ -212,20 +221,35 @@ void CModel::Dump(void) {
     }
     Merge();
 }
-
+//
+//  Loading the last generated file list.
 void CModel::LoadLastGeneratedFiles() {
+    //
+    //  Check for any path on the pathstack. Should be at least one on the stack.
+    //
     if (!pathstack.empty()) {
-        char linebuffer[1024];
         std::string   fname = pathstack.front()+"/generatedfiles";
         std::ifstream infiles(fname);
 
         while ((infiles.good()) && (!infiles.eof())) {
-            infiles.getline(linebuffer, sizeof(linebuffer));
+            //
+            //  linebuffer is a string. Makes things a bit easier.
+            std::string linebuffer;
+            std::getline(infiles, linebuffer);
+            //
+            //  Info structure with information about one generated file.
             tGenFile igenfile;
+            //
+            //  The linebuffer has fields we transfer into the info structure.
             int field = 0;
+            //
+            //  Create a list of tokens.
             auto token = helper::tokenize(linebuffer, ";");
-
+            //
+            //  Check if we have any token found.
             if (!token.empty()) {
+                //
+                //  Process the tokens.
                 for (auto & t : token) {
                     switch (field) {
                     case 0:
@@ -246,7 +270,7 @@ void CModel::LoadLastGeneratedFiles() {
                     field++;
                 }
             
-                //std::cerr << igenfile.ofile << "::" << igenfile.id << "::" << igenfile.filetype << "::" << igenfile.comment << ":\n";
+                std::cerr << igenfile.ofile << "::" << igenfile.id << "::" << igenfile.filetype << "::" << igenfile.comment << ":\n";
                 if (infiles.good()) {
                     lastgeneratedfiles.insert(std::pair<std::string, tGenFile>(igenfile.id+igenfile.filetype, igenfile));
                 }
@@ -270,55 +294,143 @@ void CModel::DumpGeneratedFiles() {
 }
 
 void CModel::Merge(void) {
-    std::list< tGenFile >::iterator files;
-
+    //
+    //  First we need the list of generated files from the last run.
     LoadLastGeneratedFiles();
-
-    for (files=generatedfiles.begin(); files!=generatedfiles.end(); ++files) {
-        size_t      basepos;
-        std::string gfile=files->ofile;
-        std::string ofile;
-        std::string lfile;
+    //
+    //  Load all manual written code from the last generated files.
+    for (auto & lastfile : lastgeneratedfiles) {
+        std::string gfilename=lastfile.second.ofile;
+        std::string ofilename;
+        std::string lfilename;
         //
         //  basepos is the position right before the dot in the generated file name.
-        basepos=gfile.find_last_of('/');
+        size_t      basepos = gfilename.find_last_of('/');
         //
         //  Now get the front until the slash
-        ofile = gfile.substr(0, basepos+1);
+        ofilename = gfilename.substr(0, basepos+1);
         //
         //  and skip the dot to create the final target file-path.
-        ofile += gfile.substr(basepos+2);
+        ofilename += gfilename.substr(basepos+2);
+        //
+        //  Read-in the manual created code.
+        //  Create all lists from the modified file.
+        std::string search = lastfile.second.comment + " User-Defined-Code:";
+        std::ifstream ofile(ofilename);   // Original file input
+        //
+        //
+        size_t state = 0;
+        size_t tagpos = 0;
+        std::string mtag; //  This holds the tag we found for a single fragment.
+        std::list<std::string> localolist; // List of lines from original file without modifiable parts.
+        std::list<std::string> mlist;      // List of manual written lines between specific tags.
+        while (ofile.good()) {
+            //
+            //  This holds only the content of the file we are processing now.
+            std::string linebuffer;
+            std::getline(ofile, linebuffer);
+            if (ofile.good()) {
+                tagpos=linebuffer.find(search);
+                switch (state) {
+                case 0:  // In this state we are in generated land.
+                    //
+                    //  Check if we have a start tag line.
+                    if (tagpos != std::string::npos) {
+                        //
+                        //  we need the tag later.
+                        mtag = linebuffer;
+                        localolist.push_back(linebuffer);
+                        search = lastfile.second.comment + " End-Of-UDC:";
+                        state=1;
+                    } else {
+                        localolist.push_back(linebuffer);
+                    }
+                    break;
+                case 1:  // In this state we are manual written land.
+                    //
+                    //  Check if we have a end-tag line.
+                    if (tagpos != std::string::npos) {
+                        search = lastfile.second.comment + " User-Defined-Code:";
+                        localolist.push_back(linebuffer);
+                        mods.insert(std::pair<std::string, std::list<std::string> >(mtag, mlist));
+                        mlist.clear();
+                        state=0;
+                    } else {
+                        mlist.push_back(linebuffer);
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        olist.emplace(lastfile.second.id + "-" + lastfile.second.filetype, localolist);
+        ofile.close();
+    }
+    //
+    //  Now we have collected all relevant information from the possible change files.
+    //
+    //  Process generated files.
+    for (auto & files : generatedfiles) {
+        std::string gfilename=files.ofile;
+        std::string ofilename;
+        std::string lfilename;
+        //
+        //  basepos is the position right before the dot in the generated file name.
+        size_t      basepos = gfilename.find_last_of('/');
+        //
+        //  Now get the front until the slash
+        ofilename = gfilename.substr(0, basepos+1);
+        //
+        //  and skip the dot to create the final target file-path.
+        ofilename += gfilename.substr(basepos+2);
         //
         //  Search the file in the last generated file list.
-        auto li = lastgeneratedfiles.find(files->id+files->filetype);
-
+        auto li = lastgeneratedfiles.find(files.id+files.filetype);
+        //
+        //  Sanity check that we have last generated file. New files of course should not exist.
         if (li != lastgeneratedfiles.end()) {
             //
             //  basepos is the position right before the dot in the last generated file name.
             basepos = li->second.ofile.find_last_of('/');
             //
             //  Now get the front until the slash
-            lfile = li->second.ofile.substr(0, basepos+1);
+            lfilename = li->second.ofile.substr(0, basepos+1);
             //
             //  and skip the dot to create the final target file-path.
-            lfile += li->second.ofile.substr(basepos+2);
+            lfilename += li->second.ofile.substr(basepos+2);
         } else {
-            lfile = ofile;
+            //
+            //  No last file. Because of the follow-up actions we set it to the ofile.
+            lfilename = ofilename;
         }
-        if (files->filetype == "mSysHeader") {
-            MergeSysHeader(gfile, ofile, files->comment, files->id);
+
+
+        if (files.filetype == "mSysHeader") {
+            MergeSysHeader(gfilename, ofilename, files.comment, files.id);
         } else {
-            Merge(gfile, ofile, lfile, files->comment);
+            Merge(gfilename, ofilename, lfilename, files.comment, files.id, files.filetype);
         }
     }
     DumpGeneratedFiles();
+    DumpLeftovers();
 }
+
 //
 //  gname   - name of the generated file. prefixed with a dot.
 //  oname   - name of the file to output. removed the dot from gname.
 //  lname   - name of the file in the last generation without the dot.
 //  comment - the comment style
-void CModel::Merge(const std::string& gname, const std::string&oname, const std::string& lname, const std::string& comment) {
+//  a_id    - the class id to get the hdr file to use as code-input
+void CModel::MergeSysHeader(const std::string& gname, const std::string&oname, const std::string& comment, const std::string& a_id) {
+}
+
+//
+//  gname   - name of the generated file. prefixed with a dot.
+//  oname   - name of the file to output. removed the dot from gname.
+//  comment - the comment style
+void CModel::Merge(const std::string& gname, const std::string&oname, const std::string& lname, const std::string& comment,
+                   const std::string& id, const std::string& filetype) {
     int         state=0;          // State variable for a little statemachine.
     size_t      tagpos;           // Where the tag starts.
     char        linebuffer[16384];// Should be large enough to get almost anything read in.
@@ -327,9 +439,7 @@ void CModel::Merge(const std::string& gname, const std::string&oname, const std:
     std::string mtag;             // This is the tag used to find the modifications.
     std::list<std::string> glist; // List of lines from generated file without modifiable parts.
     std::list<std::string> gtags; // List of tags in generated file.
-    std::list<std::string> olist; // List of lines from original file without modifiable parts.
     std::list<std::string> mlist; // List of modified lines from original file.
-    std::map<std::string, std::list <std::string> > mods; // Mods by tag
 
     std::ifstream gfile(gname);   // Generated file input
     std::ifstream ofile(lname);   // Original file input
@@ -374,64 +484,21 @@ void CModel::Merge(const std::string& gname, const std::string&oname, const std:
     }
     gfile.close();
     //
-    //  Create all lists from the modified file.
-    search = comment + " User-Defined-Code:";
-
-    while (ofile.good()) {
-        ofile.getline(linebuffer, sizeof(linebuffer)-1);
-        if (ofile.good()) {
-            line=linebuffer;
-
-            tagpos=line.find(search);
-            switch (state) {
-            case 0:
-                //
-                //  Check if we have a tag line.
-                if (tagpos != std::string::npos) {
-                    //
-                    //  we need the tag later.
-                    mtag=line;
-                    olist.push_back(line);
-                    search=comment+" End-Of-UDC:";
-                    state=1;
-                } else {
-                    olist.push_back(line);
-                }
-                break;
-            case 1:
-                //
-                //  Check if we have a end-tag line.
-                if (tagpos != std::string::npos) {
-                    search=comment+" User-Defined-Code:";
-                    olist.push_back(line);
-                    mods.insert(std::pair<std::string, std::list<std::string> >(mtag, mlist));
-                    mlist.clear();
-                    state=0;
-                } else {
-                    mlist.push_back(line);
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    }
-    ofile.close();
-    //
     // Now we must check whether we have any diffs between the new file and the original file.
     auto gi = glist.begin();
-    auto oi = olist.begin();
+    auto lolist  = olist[id + "-" + filetype];
+    auto oi = lolist.begin();
 
-    while ((gi != glist.end()) && (oi!=olist.end())) {
+    while ((gi != glist.end()) && (oi != lolist.end())) {
         if ((*gi) != (*oi)) {
             break;
         }
-        gi++;
-        oi++;
+        ++gi;
+        ++oi;
     }
     //
     // Check if both run to the end. If so they are equal and nothing has to be done.
-    if ((gi != glist.end()) || (oi!=olist.end())) {
+    if ((gi != glist.end()) || (oi != lolist.end())) {
         int         err=0;
         struct stat dirstat;
         std::string newname;
@@ -492,27 +559,79 @@ void CModel::Merge(const std::string& gname, const std::string&oname, const std:
             }
             gi++;
         }
-        auto mi = mods.begin();
-        //
-        //  Check if any modification has been left over.
-        if (mi != mods.end()) {
-            nfile << comment << "\n";
-            nfile << comment << "\n";
-            nfile << comment << " this is a collection of left-over modifications.\n";
-        }
-        for (;mi!=mods.end(); ++mi) {
-            nfile << comment << " " << mi->first << "\n";
-            for (oi=mi->second.begin();oi != mi->second.end(); ++oi) {
-                nfile << comment << " " << (*oi) << "\n";
-            }
-            nfile << comment << " end-of-" << mi->first << "\n";
-        }
-        nfile.close();
     } else {
+        for (auto & generatedtags : gtags) {
+            mods.erase(generatedtags);
+        }
     }
-
 }
 
+void CModel::DumpLeftovers(void) {
+    //
+    //  Check if any modification has been left over.
+    if (!mods.empty()) {
+        SystemTime now;
+        std::ostringstream oss;
+
+        oss << "leftovers-" << now.GetYear() << now.GetMonth() << now.GetDayOfMonth() << now.GetHour() << now.GetMinute() << now.GetSecond() << ".txt";
+        std::ofstream nfile(oss.str());
+        for (auto & mi : mods) {
+            nfile << "start-tag:" << mi.first << std::endl;
+            for (auto & oi :mi.second) {
+                nfile << " " << oi << std::endl;
+            }
+            nfile << "end-tag:" << mi.first << std::endl;
+        }
+        nfile.close();
+    }
+}
+
+
+#if 0
+void CModel::Merge(void) {
+    std::list< tGenFile >::iterator files;
+
+    LoadLastGeneratedFiles();
+
+    for (files=generatedfiles.begin(); files!=generatedfiles.end(); ++files) {
+        size_t      basepos;
+        std::string gfile=files->ofile;
+        std::string ofile;
+        std::string lfile;
+        //
+        //  basepos is the position right before the dot in the generated file name.
+        basepos=gfile.find_last_of('/');
+        //
+        //  Now get the front until the slash
+        ofile = gfile.substr(0, basepos+1);
+        //
+        //  and skip the dot to create the final target file-path.
+        ofile += gfile.substr(basepos+2);
+        //
+        //  Search the file in the last generated file list.
+        auto li = lastgeneratedfiles.find(files->id+files->filetype);
+
+        if (li != lastgeneratedfiles.end()) {
+            //
+            //  basepos is the position right before the dot in the last generated file name.
+            basepos = li->second.ofile.find_last_of('/');
+            //
+            //  Now get the front until the slash
+            lfile = li->second.ofile.substr(0, basepos+1);
+            //
+            //  and skip the dot to create the final target file-path.
+            lfile += li->second.ofile.substr(basepos+2);
+        } else {
+            lfile = ofile;
+        }
+        if (files->filetype == "mSysHeader") {
+            MergeSysHeader(gfile, ofile, files->comment, files->id);
+        } else {
+            Merge(gfile, ofile, lfile, files->comment);
+        }
+    }
+    DumpGeneratedFiles();
+}
 //
 //  gname   - name of the generated file. prefixed with a dot.
 //  oname   - name of the file to output. removed the dot from gname.
@@ -726,3 +845,4 @@ void CModel::MergeSysHeader(const std::string& gname, const std::string&oname, c
     }
 
 }
+#endif
