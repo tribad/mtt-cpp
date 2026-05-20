@@ -1141,8 +1141,14 @@ void CCxxClass::DumpAttributeDecl(std::ostream& hdr, int indent) {
                             cname.push_back('*');
                         }
                     }
-                    std::ostringstream tname;
-                    std::ostringstream aname;
+
+                    std::ostringstream tname;  // this holds the completed typename part.
+                    std::ostringstream aname;  // this holds the completed attribute part.
+                    //
+                    //  Add the const to the type if the association end is ReadOnly.
+                    if (a->isReadOnly) {
+                        tname << "const ";
+                    }
 
                     if ((a->Multiplicity == "1") || (a->Multiplicity.empty())) {
                         tname << cname;
@@ -1317,6 +1323,11 @@ void CCxxClass::DumpPackageAttributeDecl(std::ostream& hdr) {
             }
             std::ostringstream tname;
             std::ostringstream aname;
+            //
+            //  Add the const to the type if the association end is ReadOnly.
+            if (a->isReadOnly) {
+                tname << "const ";
+            }
 
             if ((a->Multiplicity == "1") || (a->Multiplicity.empty())) {
                 tname << cname;
@@ -1481,6 +1492,11 @@ void CCxxClass::DumpPackageAttributeDefinition(std::ostream& hdr) {
             }
             std::ostringstream tname;
             std::ostringstream aname;
+            //
+            //  Add the const to the type if the association end is ReadOnly.
+            if (a->isReadOnly) {
+                tname << "const ";
+            }
 
             if ((a->Multiplicity == "1") || (a->Multiplicity.empty())) {
                 tname << cname;

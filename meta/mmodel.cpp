@@ -99,8 +99,14 @@ void MModel::Complete(void) {
 
             if ((*ae)->parent->type == eElementType::Association) {
                 auto c = std::dynamic_pointer_cast<MClass>(*std::dynamic_pointer_cast<MAssociationEnd>(*ae)->Classifier);
-
-                c->Add(std::dynamic_pointer_cast<MAssociation>(*(*ae)->parent));
+                //
+                //  Check validity of the classifier before using it.
+                //  This is more a sanity check as the classifier should always be available.
+                if (c) {
+                    //
+                    //  Add the parent of the assoc-end, that is the association, into the classifier (classbased).
+                    c->AddAssoc(std::dynamic_pointer_cast<MAssociation>(*(*ae)->parent));
+                }
             }
             break;
         }

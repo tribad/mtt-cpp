@@ -48,6 +48,8 @@ std::shared_ptr<MClass> MClass::construct(const std::string&aId, std::string aPa
 
 void MClass::AddAssoc(std::shared_ptr<MAssociation> a)
 {
+    //
+    //  Check if the class is part of one of the AssociationEnds.
     if ((!a->ThisEnd(id)) || (!a->OtherEnd(id))) {
         return;
     }

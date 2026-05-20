@@ -453,6 +453,7 @@ void fillassocend(std::shared_ptr<MAssociationEnd> e, tJSONObject *j)
     e->Multiplicity      = getstringattr(j, "multiplicity");
     e->Navigable         = getnavigable(j);
     e->defaultValue      = getstringattr(j, "defaultValue");
+    e->isReadOnly        = getboolean(j, "isReadOnly", false);
     //
     //  Set the owning attribute reference.
     std::string owner = getreference(j, "ownerAttribute");
@@ -706,23 +707,33 @@ void fillassoc(std::shared_ptr<MAssociation> a, tJSONObject *j)
     a->name = getstringattr(j, "name");
     a->visibility = getvisibility(j);
     //
-    //  The id should be set already. Readin the ends
+    //  The id should be set already. Read-In the ends
     ends=(tJSONObject*)findbyname(j, "end1");
     if (ends != nullptr) {
         std::string     id      = getstringattr(ends, "_id");
         auto newend = MAssociationEnd::construct(id, a);
-
+        //
+        //  A new assoc-end needs to be filled.
         fillassocend(newend, ends);
+        //
+        //  Add the end to the association.
         a->AddEnd(newend);
+        //
+        //  Add the end to the model class. For processing later before starting the model dump.
         model->Add(newend);
     }
     ends=(tJSONObject*)findbyname(j, "end2");
     if (ends != nullptr) {
         std::string     id      = getstringattr(ends, "_id");
         auto newend = MAssociationEnd::construct(id, a);
-
+        //
+        //  Fill the other end we created.
         fillassocend(newend, ends);
+        //
+        //  Add the other end to the association as well.
         a->AddEnd(newend);
+        //
+        //  Put the assoc-end to the model class as well.
         model->Add(newend);
     }
     a->comment = getstringattr(j, "documentation");

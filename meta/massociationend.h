@@ -39,6 +39,7 @@ public:
     eNavigable                                     Navigable;
     std::string                                    mQualifier;
     std::string                                    defaultValue;
+    bool                                           isReadOnly = false;
 };
 
 #endif // MASSOCIATIONEND_H

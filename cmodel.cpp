@@ -139,7 +139,7 @@ void CModel::Prepare(void) {
         if (assoc->ends[0] && (std::dynamic_pointer_cast<MAssociationEnd>(*assoc->ends[0])->Classifier) && (std::dynamic_pointer_cast<MAssociationEnd>(*assoc->ends[0])->Classifier->IsClassBased())) {
             auto c = std::dynamic_pointer_cast<CClassBase>(*std::dynamic_pointer_cast<MAssociationEnd>(*assoc->ends[0])->Classifier);
 
-            c->Add(assoc);
+            c->AddAssoc(assoc);
         }
     }
 
