@@ -789,8 +789,15 @@ std::string COperation::getHeader(int indent) {
     /// @param[in] aName The property value to be set to the builder
     for (auto & p : Parameter) {
         auto para = std::dynamic_pointer_cast<CParameter>(*p);
+        std::string cname = para->ClassifierName;
 
-        if ((para->Direction == "return") && (para->ClassifierName != "void") && (!para->ClassifierName.empty())) {
+        if (cname.empty()) {
+            if (para->Classifier) {
+                cname = para->Classifier->name;
+            }
+        }
+
+        if ((para->Direction == "return") && (cname != "void") && (!cname.empty())) {
             dumpblockendcomment = true;
             oss << filler << gDoxygenCommentStart << " @return";
             bool firstline = true;
@@ -935,8 +942,15 @@ std::string COperation::getSourceHeader(int indent) {
     }
     for (auto & p : Parameter) {
         auto para = std::dynamic_pointer_cast<CParameter>(*p);
+        std::string cname = para->ClassifierName;
 
-        if ((para->Direction == "return") && (para->ClassifierName != "void") && (!para->ClassifierName.empty())) {
+        if (cname.empty()) {
+            if (para->Classifier) {
+                cname = para->Classifier->name;
+            }
+        }
+
+        if ((para->Direction == "return") && (cname != "void") && (!cname.empty())) {
             dumpblockendcomment = true;
             oss << filler << gDoxygenCommentStart << " @return";
             bool firstline = true;
