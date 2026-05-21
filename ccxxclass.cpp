@@ -927,7 +927,7 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                 std::string pdecl  = op->GetParameterDecl(mNameSpace);
                 std::string filler;
                 filler.assign(indent + IndentSize, ' ');
-                hdr << header << filler << gDoxygenCommentStart <<  std::endl;
+                hdr << header ;
 
                 if (op->isTemplateOperation()) {
                     op->DumpTemplateOperationPrefix(hdr, false, indent + IndentSize);
