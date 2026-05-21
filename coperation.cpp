@@ -695,51 +695,113 @@ std::string COperation::getHeader(int indent) {
     filler.assign(indent+IndentSize, ' ');
 
     oss << filler << gDoxygenCommentStart << std::endl;
+    //
+    //  No comment in model. So no line splitting needed. Simply dump the default text.
     if (comment.empty()) {
         oss << filler << gDoxygenCommentStart << " @brief TODO\n";
     } else {
+        //
+        //  Create a list of lines that make up the comment.
         auto com = GetComment();
         //
-        // Dump the brief line.
+        // Dump the brief line. Always the first line of the comment.
         std::string brief = *com.begin();
 
         oss << filler << gDoxygenCommentStart << " @brief";
+        //
+        //  Sanity check. Should never happen except in case the generator is on the way to crash.
         if (!brief.empty()) {
             oss << " " << brief << std::endl;
         } else {
             oss << std::endl;
         }
+        //
+        //  We have multiple lines in the comment.
         if (com.size() > 1) {
             oss << filler << gDoxygenCommentStart << std::endl;
-
+            //
+            //  Start one line of the beginning.
             for (auto i = ++com.begin() ; i != com.end(); ++i) {
                 oss << filler << gDoxygenCommentStart << ' ' << *i << std::endl;
             }
+        } else {
         }
     }
+    //
+    //  Dump the block end empty line.
     oss << filler << gDoxygenCommentStart << std::endl;
+    //
+    //  Get the longest parameter name.
+    size_t gapsize = 0;
+    size_t directionsize = 0;
+
+    for (auto & p : Parameter) {
+        if (p->name.size() > gapsize) {
+            gapsize = p->name.size();
+        }
+        auto para = std::dynamic_pointer_cast<CParameter>(*p);
+        if (para->Direction.size() > directionsize) {
+            directionsize = para->Direction.size();
+        }
+    }
+    //
+    //  Now dump the parameter list.
     for (auto & p : Parameter) {
         auto para = std::dynamic_pointer_cast<CParameter>(*p);
 
         if (para->Direction != "return") {
-            oss << filler << gDoxygenCommentStart << " @param[" << para->Direction << "] " << p->name;
+            std::string directionfiller;
+            directionfiller.assign(directionsize - para->Direction.size(), ' ');
+            oss << filler << gDoxygenCommentStart << " @param[" << para->Direction << "] " << directionfiller << p->name;
+            //
+            // Check for a comment at the parameter.
             if (!p->comment.empty()) {
-                oss << " " << p->comment << std::endl;
+                auto lines = p->GetComment();
+                bool firstline = true;
+                for (auto & l : lines) {
+                    if (!firstline) {
+                        std::string gapfiller;
+                        //
+                        //  The + is blank in front, blank at end. @param-size, brackets
+                        gapfiller.assign((gapsize +10 + directionsize), ' ');;
+                        oss << filler << gDoxygenCommentStart << gapfiller << " " << l << std::endl;
+                    } else {
+                        std::string gapfiller;
+                        gapfiller.assign(( gapsize - p->name.size()  ), ' ');;
+
+                        oss << gapfiller << " " << l << std::endl;
+                        firstline = false;
+                    }
+                }
             } else {
                 oss << std::endl;
             }
         }
     }
+    //
+    //  Again empty comment line at end of block.
+    oss << filler << gDoxygenCommentStart << std::endl;
+
     /// @param[in] aName The property value to be set to the builder
     for (auto & p : Parameter) {
         auto para = std::dynamic_pointer_cast<CParameter>(*p);
 
         if ((para->Direction == "return") && (para->ClassifierName != "void") && (!para->ClassifierName.empty())) {
             oss << filler << gDoxygenCommentStart << " @return";
-            if (!p->comment.empty()) {
-                oss << " " << p->comment << std::endl;
-            } else {
-                oss << std::endl;
+            bool firstline = true;
+
+            for (auto & l : p->GetComment()) {
+                if (!firstline) {
+                    std::string gapfiller;
+                    //
+                    //  The +3 are blank in front, @, blank at end of the direction.
+                    //  The sizeof the DoxygenCommentStart is not part as it is dumped anyways.
+                    gapfiller.assign((para->Direction.size() +3), ' ');;
+                    oss << filler << gDoxygenCommentStart << gapfiller << l << std::endl;
+                } else {
+                    firstline = false;
+                    oss << " " << l << std::endl;
+                }
             }
         }
     }
@@ -793,40 +855,91 @@ std::string COperation::getSourceHeader(int indent) {
         }
         if (com.size() > 1) {
             oss << filler << gDoxygenCommentStart << std::endl;
-
-            for (auto i = ++com.begin(); i != com.end(); ++i) {
+            //
+            //  Start one line of the beginning.
+            for (auto i = ++com.begin() ; i != com.end(); ++i) {
                 oss << filler << gDoxygenCommentStart << ' ' << *i << std::endl;
             }
         }
     }
+    //
+    //  Empty comment line at end-of-block.
     oss << filler << gDoxygenCommentStart << std::endl;
-    for (auto& p : Parameter) {
+    //
+    //  Get the longest parameter name.
+    size_t gapsize = 0;
+    size_t directionsize = 0;
+
+    for (auto & p : Parameter) {
+        if (p->name.size() > gapsize) {
+            gapsize = p->name.size();
+        }
+        auto para = std::dynamic_pointer_cast<CParameter>(*p);
+        if (para->Direction.size() > directionsize) {
+            directionsize = para->Direction.size();
+        }
+    }
+    for (auto & p : Parameter) {
         auto para = std::dynamic_pointer_cast<CParameter>(*p);
 
         if (para->Direction != "return") {
-            oss << filler << gDoxygenCommentStart << " @param[" << para->Direction << "] " << p->name;
+            std::string directionfiller;
+            directionfiller.assign(directionsize - para->Direction.size(), ' ');
+            oss << filler << gDoxygenCommentStart << " @param[" << para->Direction << "] " << directionfiller << p->name;
+            //
+            // Check for a comment at the parameter.
             if (!p->comment.empty()) {
-                oss << " " << p->comment << std::endl;
-            }
-            else {
+                auto lines = p->GetComment();
+                bool firstline = true;
+                for (auto & l : lines) {
+                    if (!firstline) {
+                        std::string gapfiller;
+                        //
+                        //  The + is blank in front, blank at end. @param-size, brackets
+                        gapfiller.assign((gapsize +10 + directionsize), ' ');;
+                        oss << filler << gDoxygenCommentStart << gapfiller << " " << l << std::endl;
+                    } else {
+                        std::string gapfiller;
+                        gapfiller.assign(( gapsize - p->name.size()  ), ' ');;
+
+                        oss << gapfiller << " " << l << std::endl;
+                        firstline = false;
+                    }
+                }
+            } else {
                 oss << std::endl;
             }
         }
     }
     /// @param[in] aName The property value to be set to the builder
-    for (auto& p : Parameter) {
+    ///
+    //  Empty comment line at end-of-block.
+    oss << filler << gDoxygenCommentStart << std::endl;
+
+    for (auto & p : Parameter) {
         auto para = std::dynamic_pointer_cast<CParameter>(*p);
 
         if ((para->Direction == "return") && (para->ClassifierName != "void") && (!para->ClassifierName.empty())) {
             oss << filler << gDoxygenCommentStart << " @return";
-            if (!p->comment.empty()) {
-                oss << " " << p->comment << std::endl;
-            }
-            else {
-                oss << std::endl;
+            bool firstline = true;
+
+            for (auto & l : p->GetComment()) {
+                if (!firstline) {
+                    std::string gapfiller;
+                    //
+                    //  The +3 are blank in front, @, blank at end of the direction.
+                    //  The sizeof the DoxygenCommentStart is not part as it is dumped anyways.
+                    gapfiller.assign((filler.size() + para->Direction.size() +3), ' ');;
+                    oss << filler << gDoxygenCommentStart << gapfiller << l << std::endl;
+                } else {
+                    firstline = false;
+                    oss << " " << l << std::endl;
+                }
             }
         }
     }
+    //  Empty comment line at end-of-block.
+    oss << filler << gDoxygenCommentStart << std::endl;
     //
     //  Check for requirements.
     bool req = false;
