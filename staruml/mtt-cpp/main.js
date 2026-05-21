@@ -21,6 +21,7 @@
 //  These are the node.js modules we need for some specials.
 const path          = require('path');
 const child_process = require('child_process');
+const process = require('process');
 //
 //  Defining our preferences to use.
 var mttcppPreferences = {
@@ -31,9 +32,9 @@ var mttcppPreferences = {
       text: "mttcpp Generation",
       type: "section"
     },
-    "mttcpp.gen.basedir": {
-      text: "Output Base Directory",
-      description: "This is the directory name to start generating into.",
+    "mttcpp.gen.cmdline": {
+      text: "Generator Commandline",
+      description: "This is the command line used in starting the generator.",
       type: "string",
       default: ""
     }
@@ -63,7 +64,7 @@ function run_mttcpp () {
             //  If not tell the user that we do not generate anything.
             window.alert('File Not Saved. Do not generate');
         } else {
-        	   app.preferences.set("mttcpp.gen.basedir", path.basename(the_filename, '.mdj'));
+
         }
     }
     //
@@ -75,20 +76,11 @@ function run_mttcpp () {
             //  Do save the file. Need some exception handling. But later.
             app.project.save(the_filename);
             //
-            //  Check if the basedir preference is set.
-            var outputbase = app.preferences.get("mttcpp.gen.basedir");
-            
-            if ((outputbase == null) || (outputbase.length == 0)) {
-            	  outputbase = path.basename(the_filename, '.mdj');
-	        	     app.preferences.set("mttcpp.gen.basedir", outputbase);
-	        	}
-				
-            //
-            //  get the directory we dump the code in.
-            var the_dir     = path.dirname(the_filename) + path.sep + outputbase;
-            //
             //  Create the command line to execute.
-            var the_command = 'mtt-cpp -s2 -d ' + the_dir + ' ' + the_filename;
+            var the_dir     = path.dirname(the_filename)
+            process.chdir(the_dir);
+            var the_cmdline = app.preferences.get("mttcpp.gen.cmdline");
+            var the_command = 'mtt-cpp -s2 ' + the_cmdline + ' ' + the_filename;
             console.log(`Command:  ${the_command}`);
             //
             // Do it. We do not have an error handling here.
