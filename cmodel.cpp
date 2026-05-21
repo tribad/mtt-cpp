@@ -270,7 +270,7 @@ void CModel::LoadLastGeneratedFiles() {
                     field++;
                 }
             
-                std::cerr << igenfile.ofile << "::" << igenfile.id << "::" << igenfile.filetype << "::" << igenfile.comment << ":\n";
+                //std::cerr << igenfile.ofile << "::" << igenfile.id << "::" << igenfile.filetype << "::" << igenfile.comment << ":\n";
                 if (infiles.good()) {
                     lastgeneratedfiles.insert(std::pair<std::string, tGenFile>(igenfile.id+igenfile.filetype, igenfile));
                 }
