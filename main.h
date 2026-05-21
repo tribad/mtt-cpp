@@ -24,6 +24,8 @@
 #include <set>
 #include "types.h"
 
+extern std::string gModelName;
+
 extern std::string gModelPath;
 extern std::string gDumpId;
 extern bool        gDumpStarted;

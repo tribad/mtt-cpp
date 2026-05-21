@@ -62,6 +62,7 @@
 #include "musecase.h"
 #include "umldiagram.h"
 
+std::string gModelName;
 std::shared_ptr<CModel> loadedmodel;
 //
 //  C++ specific configuration.
@@ -250,6 +251,7 @@ int main(int argc, char** argv) {
     if (!gModelPath.empty()) {
         CPath fname(gModelPath);
         std::cerr << "Generating into :" << helper::getcwd() << "::" << directory << ":" << std::endl;
+        gModelName = helper::tolower(fname.Base());
         //
         //  We are ready to generate.
 #ifndef __linux

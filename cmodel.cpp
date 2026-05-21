@@ -228,7 +228,7 @@ void CModel::LoadLastGeneratedFiles() {
     //  Check for any path on the pathstack. Should be at least one on the stack.
     //
     if (!pathstack.empty()) {
-        std::string   fname = pathstack.front()+"/generatedfiles";
+        std::string   fname = pathstack.front()+"/" + gModelName + "-generatedfiles";
         std::ifstream infiles(fname);
 
         while ((infiles.good()) && (!infiles.eof())) {
@@ -281,7 +281,7 @@ void CModel::LoadLastGeneratedFiles() {
 
 void CModel::DumpGeneratedFiles() {
     if (!pathstack.empty()) {
-        std::string   fname = pathstack.front()+"/generatedfiles";
+        std::string   fname = pathstack.front() + "/" + gModelName + "-generatedfiles";
         std::ofstream outfiles(fname);
 
         if (outfiles.good()) {
