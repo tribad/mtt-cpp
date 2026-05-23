@@ -163,12 +163,8 @@ std::list<std::string> MElement::GetComment(size_t length) {
         } while (iss.good());
         //
         //  Remove empty lines from the back
-        for (auto ol = lines.rbegin(); ol != lines.rend(); ++ol) {
-            if (ol->empty()) {
-                lines.pop_back();
-            } else {
-                break;
-            }
+        while ((!lines.empty() && (lines.back().empty()))) {
+            lines.pop_back();
         }
     }
 
