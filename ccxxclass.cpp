@@ -720,7 +720,8 @@ void CCxxClass::CollectNeededModelHeader(std::shared_ptr<MElement> e, HeaderList
         }
     }
 }
-
+//
+//  Collect all fowards needed for the classes headerfile.
 void CCxxClass::CollectForwards() {
     donelist.clear();
     //
@@ -1019,6 +1020,19 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                 }
                 hdr << op->GetReturnType(mNameSpace) << " ";
                 hdr << op->name << "(" <<  pdecl << ") ;\n";
+                if (op->isQuery) {
+                    hdr << " const";
+                }
+                if ((!op->mException) && (!op->HasStereotype("delete"))) {
+                    hdr << " noexcept";
+                }
+                if (mIsInterface && op->isAbstract) {
+                    hdr << " = 0";
+                } else {
+                    if (op->isAbstract && (op->HasStereotype("pure") || op->isPure)) {
+                        hdr << " = 0";
+                    }
+                }
             }
         }
     }
@@ -1045,6 +1059,19 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
             }
             hdr << op->GetReturnType(mNameSpace) << " ";
             hdr << op->name << "(" <<  pdecl << ") ;\n";
+            if (op->isQuery) {
+                hdr << " const";
+            }
+            if ((!op->mException) && (!op->HasStereotype("delete"))) {
+                hdr << " noexcept";
+            }
+            if (mIsInterface && op->isAbstract) {
+                hdr << " = 0";
+            } else {
+                if (op->isAbstract && (op->HasStereotype("pure") || op->isPure)) {
+                    hdr << " = 0";
+                }
+            }
         }
     }
 }
@@ -2376,7 +2403,8 @@ std::shared_ptr<COperation> CCxxClass::findBySignature(const std::string& aSigna
 
 void CCxxClass::DumpForwards(std::ostream& file) {
     NameSpaceNode nstree;
-
+    //
+    //  Dump the forwards collected while building the include lists.
     for (auto & f : forwards) {
         nstree.add(f->mNameSpace.get(), f);
     }
@@ -2499,6 +2527,8 @@ void CCxxClass::CollectForwards(std::shared_ptr<CClassBase> aClass) {
 
 
 void CCxxClass::CollectForwardRefs(std::shared_ptr<CClassBase> aClass) {
+    //
+    //  Sanity check. Defensiv programming.
     if (aClass) {
         auto cil = aClass->getRefTypes();
 

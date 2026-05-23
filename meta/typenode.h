@@ -69,7 +69,7 @@ public:
     TypeNode & operator=(const TypeNode&) = default;
     //
     //  Check if a forward is needed.
-    bool NeedsForward() const {return (mExtension != TypeExtension::None);}
+    bool NeedsForward() const {return ((mExtension != TypeExtension::None) || (mPointerDereference !=0));}
     //
     //  Check if this is a composite type.
     bool isCompositeType() const { return (mTemplateType || mConst || (mExtension != TypeExtension::None) || mPointerDereference);}
