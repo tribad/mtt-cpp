@@ -373,7 +373,7 @@ void fillelement(std::shared_ptr<MElement> e, tJSONObject* j) {
 
     auto stereotype = model->StereotypeById(getstereotype((tJSONObject*)(j)));
     if (stereotype) {
-        e->stereotypes.insert(std::pair<std::string, std::shared_ptr<MStereotype>>(stereotype->name, stereotype));
+        e->stereotypes.insert(std::pair<std::string, std::shared_ptr<MStereotype>>(helper::tolower(stereotype->name), stereotype));
     }
 }
 
@@ -1432,12 +1432,15 @@ void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
         for (i=operations->values.begin(); i!= operations->values.end(); ++i) {
             std::string o_type=getstringattr((tJSONObject*)(*i), "_type");
             std::string id=getstringattr((tJSONObject*)(*i), "_id");
+            std::string stname = getstereotype((tJSONObject*)(*i));
 
             if (o_type == "UMLOperation") {
                 auto newop=MOperation::construct(id, c);
 
-                filloperation(newop, (tJSONObject*)(*i));
-                c->Operation.emplace_back(newop);
+                if (newop) {
+                    filloperation(newop, (tJSONObject*)(*i));
+                    c->Operation.emplace_back(newop);
+                }
             }
         }
     }
