@@ -72,6 +72,8 @@ bool  MttXmlNode::boolProperty(std::string const& aName, bool aDefaultValue) {
         if (prop != nullptr) {
             if (strcmp((const char*)prop, "true")==0) {
                 retval = true;
+            } else {
+                retval = false;
             }
             xmlFree(prop);
         }
