@@ -215,9 +215,8 @@ void CPackageBase::PrepareBase(const std::map<std::string, std::string>& tags) {
             OutputPath = i->second;
         } else if ((tagname == "namespace") && (!i->second.empty())) {
             mNameSpace = i->second;
-        }
-        else if ((tagname == "namespace") && (!i->second.empty())) {
-            mNameSpace = i->second;
+        } else if ((tagname == "buildsystem") && (!i->second.empty())) {
+            mBuildSystem = i->second;
         }
     }
 }
@@ -248,6 +247,126 @@ void CPackageBase::DumpBase(std::shared_ptr<CModel> model) {
     //  At this point we have a directory to create the generation
     //  results into.
     cmodel->pathstack.push_back(path);
+    //
+    //  Now create some info for the buildsystem to use.
+    std::string buildfile = cmodel->pathstack.back() + '/';
+    if (mBuildSystem == "qmake") {
+        buildfile += OutputName + ".pro";
+        //
+        // The stream get automaticly closed later.
+        OpenStream(makefile, buildfile);
+        makefile << "TEMPLATE = app\n";
+        makefile << "TARGET = " << OutputName << std::endl;
+        makefile << "INCLUDEPATH += .\n\n";
+
+        makefile << "QT += \\\n";
+        std::string filler;
+        filler.assign(6, ' ');
+        //
+        //  Collect the libraries that we need.
+        auto libs = GetLibraryDependency();
+        //
+        //  We got a list of libraries that are linked to the package.
+        for (auto l : libs) {
+            auto e = l.getElement();
+
+            //std::cerr << "lib : "  << e->name << std::endl;
+            if (e->IsPackageBased() && (e->type == eElementType::ExternPackage) ) {
+                std::string libname = e->name;
+
+                if (e->HasTaggedValue("outputname")) {
+                    libname = e->GetTaggedValue("outputname");
+                }
+                makefile << filler << libname << "\\\n";
+            }
+        }
+        makefile << std::endl;
+
+        //
+        //  Search all content that needs to be taken into account.
+        std::list<eElementType>                   contenttypes;
+        std::list<std::shared_ptr<MClass>>        content;
+
+        contenttypes.push_back(eElementType::Enumeration);
+        contenttypes.push_back(eElementType::Union);
+        contenttypes.push_back(eElementType::CxxClass);
+        contenttypes.push_back(eElementType::CClass);
+        contenttypes.push_back(eElementType::Struct);
+        contenttypes.push_back(eElementType::InterfaceClass);
+        contenttypes.push_back(eElementType::ExternClass);
+
+        content = GetContentForQMake(contenttypes);
+        makefile << "HEADERS +=\\\n";
+        filler.assign(10, ' ');
+        //
+        //  If the class is in a different package it should be one of the subpackages.
+        for (auto & c : content) {
+            //
+            //  The content should have a parent that is not the actual package but is some other package.
+            //  The check for a parent package is needed as you can have enclosed classes that have other classes as
+            //  parent.
+            if ( (c->parent) && (c->parent != sharedthis<MElement>()) && (c->parent->IsPackageBased())) {
+                //
+                //  create the relative path to the parent package.
+                std::string pathto = GetPathToPackage(c->parent);
+//                std::cerr << "Name: " << c->name << "::" << pathto << std::endl;
+                if (c->type != eElementType::ExternClass) {
+                    makefile << filler << pathto << c->name << ".h\\\n";
+                }
+                if ((c->type == eElementType::SimObject) || (c->type == eElementType::CxxClass) || (c->type == eElementType::CClass)) {
+                    //modules.push_back("./"+pathto+"/"+c->name);
+                }
+            }
+        }
+        makefile << std::endl;
+        makefile << "FORMS +=\\\n";
+        filler.assign(8, ' ');
+
+        //
+        //  If the class is in a different package it should be one of the subpackages.
+        for (auto & c : content) {
+            //
+            //  The content should have a parent that is not the actual package but is some other package.
+            //  The check for a parent package is needed as you can have enclosed classes that have other classes as
+            //  parent.
+            if ( (c->parent) && (c->parent != sharedthis<MElement>()) && (c->parent->IsPackageBased())) {
+                //
+                //  create the relative path to the parent package.
+                std::string pathto = GetPathToPackage(c->parent);
+                //                std::cerr << "Name: " << c->name << "::" << pathto << std::endl;
+                if ((c->type == eElementType::ExternClass) && (c->HasStereotype("qtdesigner"))) {
+                    makefile << filler << pathto << c->name << ".ui\\\n";
+                }
+                if ((c->type == eElementType::SimObject) || (c->type == eElementType::CxxClass) || (c->type == eElementType::CClass)) {
+                    //modules.push_back("./"+pathto+"/"+c->name);
+                }
+            }
+        }
+        makefile << std::endl;
+        makefile << "SOURCES +=\\\n";
+        filler.assign(10, ' ');
+        //
+        //  If the class is in a different package it should be one of the subpackages.
+        for (auto & c : content) {
+            //
+            //  The content should have a parent that is not the actual package but is some other package.
+            //  The check for a parent package is needed as you can have enclosed classes that have other classes as
+            //  parent.
+            if ( (c->parent) && (c->parent != sharedthis<MElement>()) && (c->parent->IsPackageBased())) {
+                //
+                //  create the relative path to the parent package.
+                std::string pathto = GetPathToPackage(c->parent);
+//                std::cerr << "Name: " << c->name << "::" << pathto << std::endl;
+                if ((c->type != eElementType::Enumeration) && (c->type != eElementType::Class) && (c->type != eElementType::ExternClass)) {
+                    makefile << filler << pathto << c->name << ".cpp\\\n";
+                }
+                if ((c->type == eElementType::SimObject) || (c->type == eElementType::CxxClass) || (c->type == eElementType::CClass)) {
+                    //modules.push_back("./"+pathto+"/"+c->name);
+                }
+            }
+        }
+        makefile << std::endl;
+    }
 }
 
 std::list<tConnector<MElement, MElement>> CPackageBase::GetLibraryDependency() {
@@ -264,6 +383,36 @@ std::list<tConnector<MElement, MElement>> CPackageBase::GetLibraryDependency() {
             if (!more.empty()) {
                 result.insert(result.end(), more.begin(), more.end());
             }
+        }
+    }
+    return (result);
+}
+
+std::list<std::shared_ptr<MClass>> CPackageBase::GetContentForQMake(std::list<eElementType> types) {
+    std::list<std::shared_ptr<MClass>> result;
+    std::list<eElementType>::iterator  eti;
+
+    for (auto & ci : Classes) {
+        for (eti = types.begin(); eti != types.end(); ++eti) {
+            if (ci->type == *eti) {
+                result.push_back(std::dynamic_pointer_cast<MClass>(*ci));
+                break;
+            }
+        }
+    }
+    for (auto & pi : Packages) {
+        //
+        //  Check all packages that may contain content for the qmake.
+        if ((pi->type == eElementType::Package) || (pi->type == eElementType::LibraryPackage) || (pi->type == eElementType::ExecPackage)) {
+            //
+            //  Add the content of simple packages
+            std::list<std::shared_ptr<MClass>> subpackage = std::dynamic_pointer_cast<CPackageBase>(*pi)->GetContentForQMake(types);
+
+            result.insert(result.end(), subpackage.begin(), subpackage.end());
+        } else if (pi->type == eElementType::ModulePackage) {
+            //
+            //  Module packages combine the content in a single module.
+            //  So only a single dummy class will be returned that will contain all content in it.
         }
     }
     return (result);

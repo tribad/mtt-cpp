@@ -58,6 +58,7 @@ public:
     std::list<std::string> GetPathList();
     std::string GetPathToPackage(std::shared_ptr<MElement> e);
     std::list<std::shared_ptr<MClass>> GetAllContent(std::list<eElementType> types);
+    std::list<std::shared_ptr<MClass>> GetContentForQMake(std::list<eElementType> types);
     bool HasCode();
     bool hasNameSpace() const {return !mNameSpace.empty();}
     std::string GetNameSpace() const;
@@ -79,12 +80,13 @@ public:
     std::string     OutputName;                //  Name of the build result from the 'Directory' content
     std::string     OutputPath;                //  Directory where the build result can be found.
     std::string     ExtraInclude;              //  Special include files that must be included in every module
-    std::ofstream   makefile;
+    std::ofstream   makefile;                  //  Used for all sorts of build system files.
     bool            mCreateSubsystem = false;
     SubsystemFormat mSubsystemFormat = SubsystemFormat::EAXMI;
     std::ofstream   mExportFile;
     bool            m_init_done = false;       //  Prevent double initialization.
     std::string     m_cxxstandard = "c++17";
+    std::string     mBuildSystem  = "make";    //  Define the file type and content for the buildsystem.
 };
 
 #endif // CPACKAGEBASE_H
