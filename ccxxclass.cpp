@@ -203,6 +203,25 @@ void CCxxClass::Prepare(void) {
         for (auto& e : enclosed) {
             e->Prepare();
         }
+        std::vector<MElementRef>     corrected_gens;
+        //
+        //  Check for a Qt class because it should be put in front.
+        for (auto & gi : Generalization) {
+            if (gi) {
+                auto gip = std::dynamic_pointer_cast<CGeneralization>(*gi);
+                if (gip->base != nullptr) {
+                    auto cb = std::dynamic_pointer_cast<CClassBase>(*gip->base);
+                    //
+                    //  If we find a qt class as base we take it.
+                    if (cb->HasStereotype("qt")) {
+                        corrected_gens.insert(corrected_gens.begin(), gi);
+                    } else {
+                        corrected_gens.push_back(gi);
+                    }
+                }
+            }
+        }
+        Generalization = corrected_gens;
     }
 }
 
@@ -1023,9 +1042,6 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                 if (op->isQuery) {
                     hdr << " const";
                 }
-                if ((!op->mException) && (!op->HasStereotype("delete"))) {
-                    hdr << " noexcept";
-                }
                 if (mIsInterface && op->isAbstract) {
                     hdr << " = 0";
                 } else {
@@ -1062,9 +1078,6 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
             hdr << op->name << "(" <<  pdecl << ")";
             if (op->isQuery) {
                 hdr << " const";
-            }
-            if ((!op->mException) && (!op->HasStereotype("delete"))) {
-                hdr << " noexcept";
             }
             if (mIsInterface && op->isAbstract) {
                 hdr << " = 0";
@@ -1640,7 +1653,7 @@ void CCxxClass::DumpOperationDefinition(std::ostream &src) {
                         if (op->isQuery) {
                             src << " const ";
                         }
-                        if (!op->mException) {
+                        if ((!op->mException) && (!op->HasStereotype("slot"))) {
                             src << " noexcept";
                         }
                     } else {
