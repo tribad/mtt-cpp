@@ -1059,7 +1059,7 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                 hdr << "virtual ";
             }
             hdr << op->GetReturnType(mNameSpace) << " ";
-            hdr << op->name << "(" <<  pdecl << ") ;\n";
+            hdr << op->name << "(" <<  pdecl << ")";
             if (op->isQuery) {
                 hdr << " const";
             }
@@ -1073,6 +1073,7 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                     hdr << " = 0";
                 }
             }
+            hdr << ";\n";
         }
     }
 }
