@@ -377,8 +377,6 @@ The source file generated.
 
 ```
 
-
-
 #### module
 This is a class that creates a single source and header file for multiple class definitions. In case you think you need it.
 The classes/types that need to be generated in this module are enclosed from the module. In the model tree positioned beneath the module class.

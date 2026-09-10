@@ -831,6 +831,11 @@ void CCxxClass::DumpPackageOperationDecl(std::ostream& hdr) {
             if (op->HasStereotype("CLinkage")) {
                 hdr << "extern \"C\" ";
             }
+            //
+            //  Dump the operation header.
+            auto header = op->getHeader(-1);
+            hdr << header;
+
             if ((op->name != name) && (op->name != std::string("~")+name)) {
                 hdr << op->GetReturnType(mNameSpace) << " ";
                 hdr << op->name << "(" <<  pdecl << ") ;\n";
@@ -1576,9 +1581,14 @@ void CCxxClass::DumpPackageOperationDefinition(std::ostream &src, bool aStatic) 
         auto op = std::dynamic_pointer_cast<COperation>(*mo);
 
         if ((mo->visibility == vPackage) && (op->isStatic == aStatic)) {
+            //
+            //  First dump the header.
+            auto header = op->getHeader(-1);
+            src << header;
+
             std::string pdef=op->GetParameterDefinition(mNameSpace);
 
-            op->DumpComment(src, 0, 130, "//", "//", "");
+
 
             rettype=op->GetReturnType(mNameSpace);
             if (rettype.at(rettype.size()-1)== '&') {

@@ -692,7 +692,11 @@ std::map <std::string, std::pair<std::string, std::string>>  COperation::parseCt
 std::string COperation::getHeader(int indent) {
     std::ostringstream oss;
     std::string filler;
-    filler.assign(indent+IndentSize, ' ');
+    //
+    //  If the indent value is < 0 we do not setup a filler.
+    if (indent >= 0) {
+        filler.assign(indent+IndentSize, ' ');
+    }
 
     oss << filler << gDoxygenCommentStart << std::endl;
     //
