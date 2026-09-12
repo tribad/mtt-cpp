@@ -2452,8 +2452,7 @@ void CCxxClass::DumpInlineOperations(std::ostream &hdr) {
                 //  No implementation for operations that have a default or delete stereotype.
                 if ((!op->HasStereotype("default")) && (!op->HasStereotype("delete"))) {
                     std::string pdef=op->GetParameterDefinition(mNameSpace);
-
-                    op->DumpComment(hdr, 0, 130, "//", "//", "");
+                    hdr  << op->getSourceHeader(0);
                     if (isTemplateClass()) {
                         DumpTemplatePrefix(hdr);
                     }

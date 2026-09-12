@@ -857,6 +857,7 @@ std::string COperation::getHeader(int indent) {
 std::string COperation::getSourceHeader(int indent) {
     std::ostringstream oss;
     std::string filler;
+
     filler.assign(indent, ' ');
 
     oss << filler << gDoxygenCommentStart << std::endl;
