@@ -725,7 +725,9 @@ std::string COperation::getHeader(int indent) {
             //
             //  Start one line of the beginning.
             for (auto i = ++com.begin() ; i != com.end(); ++i) {
-                oss << filler << gDoxygenCommentStart << ' ' << *i << std::endl;
+                if (!(*i).empty()) {
+                    oss << filler << gDoxygenCommentStart << ' ' << *i << std::endl;
+                }
             }
         } else {
         }
@@ -882,7 +884,9 @@ std::string COperation::getSourceHeader(int indent) {
             //
             //  Start one line of the beginning.
             for (auto i = ++com.begin() ; i != com.end(); ++i) {
-                oss << filler << gDoxygenCommentStart << ' ' << *i << std::endl;
+                if (!(*i).empty()) {
+                    oss << filler << gDoxygenCommentStart << ' ' << *i << std::endl;
+                }
             }
         }
     }
