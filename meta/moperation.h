@@ -41,7 +41,7 @@ public:
     bool                                      isQuery        = false;
     bool                                      isPure         = false;
     bool                                      hasConstReturn = false;
-    MElementRef                               mException;
+    std::vector<MElementRef>                  mException;
 
     std::string                               Specification;
     MElementRef                               Activity;

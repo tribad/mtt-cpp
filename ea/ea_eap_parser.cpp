@@ -1102,7 +1102,7 @@ static void ea_eap_load_operations(std::shared_ptr<MModel> aModel) {
 
                 while ((x != xrefClientMap.end()) && (x->first == id)) {
                     if (helper::tolower(x->second->mBehavior) == "raisedexception") {
-                        op->mException = x->second->mDescription.mStruct.begin()->mValue;
+                        op->mException.emplace_back(x->second->mDescription.mStruct.begin()->mValue);
                     }
                     ++x;
                 }

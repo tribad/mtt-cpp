@@ -691,19 +691,24 @@ void CCxxClass::CollectNeededModelHeader(std::shared_ptr<MElement> e, HeaderList
             //
             //  Check if there is an exception class attached.
             auto op = oi->sharedthis<COperation>();
-
-            if (op->mException) {
+            //
+            //  Checking that there is any exception defined.
+            if (!op->mException.empty()) {
                 //
-                //  We use the CollectFromParameter() here as I am to lazy to create a new method.
-                auto ec = std::dynamic_pointer_cast<CClassBase>(*(op->mException));
+                //  Take them all to create the includes.
+                for (auto & ex : op->mException) {
+                    //
+                    //  We use the CollectFromParameter() here as I am to lazy to create a new method.
+                    auto ec = std::dynamic_pointer_cast<CClassBase>(*(ex));
 
-                if (ec && (ec->IsClassBased())) {
-                    //
-                    //  Create a list of types from the classifier.
-                    CollectFromParameter(ec->mTypeTree, aHeaderList);
-                } else {
-                    //
-                    //  The mException can only be a classifier. So no alternate solution
+                    if (ec && (ec->IsClassBased())) {
+                        //
+                        //  Create a list of types from the classifier.
+                        CollectFromParameter(ec->mTypeTree, aHeaderList);
+                    } else {
+                        //
+                        //  The mException can only be a classifier. So no alternate solution
+                    }
                 }
             }
         }
@@ -977,7 +982,7 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                     if (op->isQuery) {
                         hdr << " const";
                     }
-                    if ((!op->mException) && (!op->HasStereotype("delete"))) {
+                    if ((op->mException.empty()) && (!op->HasStereotype("delete"))) {
                         hdr << " noexcept";
                     }
                     if (mIsInterface && op->isAbstract) {
@@ -1663,7 +1668,7 @@ void CCxxClass::DumpOperationDefinition(std::ostream &src) {
                         if (op->isQuery) {
                             src << " const ";
                         }
-                        if ((!op->mException) && (!op->HasStereotype("slot"))) {
+                        if ((op->mException.empty()) && (!op->HasStereotype("slot"))) {
                             src << " noexcept";
                         }
                     } else {
@@ -2473,7 +2478,7 @@ void CCxxClass::DumpInlineOperations(std::ostream &hdr) {
                         if (op->isQuery) {
                             hdr << " const ";
                         }
-                        if (!op->mException) {
+                        if (op->mException.empty()) {
                             hdr << " noexcept";
                         }
                     } else {

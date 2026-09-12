@@ -651,6 +651,21 @@ void filloperation(std::shared_ptr<MOperation> o, tJSONObject *j) {
     //
     //  Fill with tagged values.
     fillelement(o, j);
+    //
+    //  Add the exceptions to the operation.
+    tJSONArray* exceptions=(tJSONArray*)(findbyname(j, "raisedExceptions"));
+
+    if (exceptions != nullptr) {
+        for (auto e : exceptions->values) {
+            auto & vv =  ((tJSONObject*)e)->values["$ref"];
+            {
+                auto v = ((tJSONValue*)(vv))->value;
+
+                o->mException.emplace_back((std::string)v);
+
+            }
+        }
+    }
 
     o->isStatic       = getboolean(j, "isStatic");
     o->isAbstract     = getboolean(j, "isAbstract");
