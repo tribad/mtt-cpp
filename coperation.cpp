@@ -96,7 +96,6 @@ void COperation::Prepare(void) {
     if (Activity) {
         Activity->Prepare();
     }
-
     //
     //  Prepare attached collaborations.
     for (auto& col : mCollaboration) {

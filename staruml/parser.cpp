@@ -358,6 +358,7 @@ void filltemplateparameters(std::shared_ptr<MElement> e, tJSONObject* j) {
             p->ClassifierName = ptype;
             p->defaultValue   = defvalue;
             p->mPosition      = pos;
+            filltags(p, (tJSONObject*)(i));
 
             c->mClassParameter.emplace(pos++, p);
         }

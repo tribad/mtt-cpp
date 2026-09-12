@@ -105,9 +105,26 @@ void TypeNode::fill(const std::string& aClassNameSpace) {
     if (mClassifier) {
         mScope = std::dynamic_pointer_cast<MClass>(*mClassifier)->getEnclosingScope();
     }
-
+    //
+    //  These parameters are the actual parameters to the template.
+    //  They are sorted by position.
+    //  After the recursive call to p.fill returns we can set the mTreatAsReference if we find such tagged value
+    //  In the template class.
+    int parameter_position = 0;            //  Track the parameter position we are working on.
     for (auto &p: mParameter) {
         p.fill(aClassNameSpace);
+        //
+        //  We need a classifier that holds the 'mTreatAsReference' information.
+        if (mClassifier) {
+            auto cc = std::dynamic_pointer_cast<CClassBase>(*mClassifier);
+
+            for (auto & tas : cc->mTreatAsReference) {
+                if (tas.first == parameter_position) {
+                    p.mTreatAsReference = true;
+                }
+            }
+        }
+        parameter_position++;
     }
 }
 

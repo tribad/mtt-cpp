@@ -69,7 +69,8 @@ public:
     TypeNode & operator=(const TypeNode&) = default;
     //
     //  Check if a forward is needed.
-    bool NeedsForward() const {return ((mExtension != TypeExtension::None) || (mPointerDereference !=0));}
+    bool NeedsForward() const {return ((mExtension != TypeExtension::None) || (mPointerDereference != 0)
+                                                                           || (mTreatAsReference == true));}
     //
     //  Check if this is a composite type.
     bool isCompositeType() const { return (mTemplateType || mConst || (mExtension != TypeExtension::None) || mPointerDereference);}
@@ -88,7 +89,7 @@ public:
     //
     //  fill the type tree from the existing types.
     //  This maybe done multiple times before the type tree is completed.
-    //  It depends on the order of the creation of the dependenies.
+    //  It depends on the order of the creation of the dependencies.
     //  This order cannot be guaranteed while reading the model from the model-storage.
     void fill(const std::string& aClassNameSpace);
     //
@@ -114,6 +115,7 @@ public:
     std::string           mScope;                                     // For inner classes the scope they are in.
     TypeExtension         mExtension          = TypeExtension::None;  // * & &&
     int                   mPointerDereference = 0;                    // Number of asterisks.
+    bool                  mTreatAsReference   = false;                //  This is needed for template parameters so that we can create forwards.
     TypeFunction          mFunction           = TypeFunction::None;
     bool                  mConst              = false;
     bool                  mTemplateType       = false;

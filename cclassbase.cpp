@@ -256,11 +256,31 @@ void CClassBase::PrepareBase() {
                 pname.clear();
             }
         }
+        //
+        //  Go along the class parameters and check if they have a tagged value "isReference".
+        //  From that we fill our list of parameter that are treated as reference.
+        for (auto & cp : mClassParameter) {
+            std::string reference = cp.second->GetTaggedValue("isReference");
+
+            if ((!reference.empty()) && (reference == "true")) {
+                mTreatAsReference.emplace_back(cp.first, cp.second->name);
+            }
+        }
+
         std::map<std::string, std::string>::const_iterator i;
         for (i=tags.begin(); i!= tags.end(); ++i) {
             SetFromTags(i->first, i->second);
         }
         //
+        //  The enterprise architect does not allow tagged values on class parameters.
+        //  This is why TreatParameterAsReference is used instead.
+        //  But the better way would be to use a tagged value on the class parameter.
+        //  Anyway we need to use the solution that works better with the other parts of the generator.
+        //
+        //  As an alternative implementation of the TreatParameterAsReference tag on the class
+        //  Should do the mapping here. At the moment I have no idea. But I can check that now as I have StarUML in use and it
+        //  already has a tag at the paremter in question.
+
         //  prep the generalizations.
         for (auto & gi : Generalization) {
             auto g = std::dynamic_pointer_cast<CGeneralization>(*gi);
