@@ -72,7 +72,7 @@
 #include "mobject.h"
 #include "mmodel.h"
 #include "minteraction.h"
-
+#include "mrequirement.h"
 #include "mconnector.h"
 
 #include "stereotypes.h"
@@ -1233,6 +1233,35 @@ void fillinteraction(std::shared_ptr<MInteraction> in, tJSONObject *j) {
     }
 }
 
+void fillrequirement(std::shared_ptr<MRequirement> r, tJSONObject *j) {
+    std::vector<tJSON*>::iterator i;
+    fillelement(r, j);
+    tJSONArray*                   owned      = (tJSONArray*)(findbyname(j, "ownedElements"));
+
+    r->reqid         = getstringattr(j, "id");
+
+    //
+    //  The id should be set already. Now check whether we have owned elements.
+    if (owned != nullptr) {
+        //
+        //  *i points to an tJSONObject. For all UMLClass objects we create the
+        //  model elements.
+        for (i = owned->values.begin(); i != owned->values.end(); ++i) {
+            std::string o_type = getstringattr((tJSONObject*)(*i), "_type");
+            std::string id     = getstringattr((tJSONObject*)(*i), "_id");
+
+            if (o_type=="SysMLRequirement") {
+                auto stereotype = model->StereotypeById(getstereotype((tJSONObject*)(*i)));
+                auto newreq = MRequirement::construct(id, stereotype, r);
+                if (newreq) {
+                    fillrequirement(newreq,  (tJSONObject*)(*i));
+                    r->Add(newreq);
+                }
+            }
+        }
+    }
+}
+
 void fillclass(std::shared_ptr<MClass> c, tJSONObject *j) {
     std::vector<tJSON*>::iterator i;
     tJSONArray*                   owned      = (tJSONArray*)(findbyname(j, "ownedElements"));
@@ -1602,6 +1631,13 @@ void fillpackage(std::shared_ptr<MPackage> pack, tJSONObject *j) {
                 fillobject(newobj,  (tJSONObject*)(*i));
                 pack->Add(newobj);
 
+            } else if (t == "SysMLRequirement") {
+                std::string  id         = getstringattr((tJSONObject*)(*i), "_id");
+                auto stereotype = model->StereotypeById(getstereotype((tJSONObject*)(*i)));
+                auto newreq     = MRequirement::construct(id, stereotype, pack);
+
+                fillrequirement(newreq,  (tJSONObject*)(*i));
+                pack->Add(newreq);
             } else if (t == "UMLEnumeration") {
                 std::string  id         = getstringattr((tJSONObject*)(*i), "_id");
                 auto stereotype = model->StereotypeById(getstereotype((tJSONObject*)(*i)));

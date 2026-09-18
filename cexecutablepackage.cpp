@@ -56,6 +56,10 @@ void CExecutablePackage::Prepare(void) {
             }
         }
     }
+    auto reqs = getOwned(eElementType::Requirement);
+    for (auto r : reqs) {
+        r->Prepare();
+    }
 
     for (auto & i : Classes) {
         i->Prepare();

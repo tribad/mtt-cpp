@@ -147,20 +147,38 @@ std::string CCxxClass::FQN() const {
 void CCxxClass::Prepare(void) {
     if (!PrepDone) {
         PrepareBase();
-        if (HasTaggedValue("Serialize")) {
-            std::string ser = helper::tolower(GetTaggedValue("Serialize"));
-            if (ser == "true") {
-                mSerialize = true;
-            }
-            else {
-            }
+        std::string ser = helper::tolower(GetTaggedValue("Serialize"));
+        if ((!ser.empty()) && (ser == "true")) {
+            mSerialize = true;
         }
-        if (HasTaggedValue("ByteOrder")) {
-            std::string bo = helper::tolower(GetTaggedValue("ByteOrder"));
-            if (bo == "network") {
-                mByteOrder = eByteOrder::Network;
-            }
-            else {
+        else {
+        }
+        std::string bo = helper::tolower(GetTaggedValue("ByteOrder"));
+        if ((!bo.empty()) && (bo == "network")) {
+            mByteOrder = eByteOrder::Network;
+        }
+        else {
+            mByteOrder = eByteOrder::Host;
+        }
+        std::string reqlink = helper::tolower(GetTaggedValue("Requirements"));
+        //
+        //  Add trace dependencies if we have some requirement ids in the tagged value.
+        if (!reqlink.empty()) {
+            auto rlinklist = helper::tokenize(reqlink, " \t\n");
+            for (auto & rlink : rlinklist) {
+                auto stt = MStereotype::byName.find("trace");
+                if (stt != MStereotype::byName.end()) {
+                    auto reqdep = MDependency::construct(id+"-"+rlink, stt->second, sharedthis<MElement>());
+                    if (reqdep) {
+                        reqdep->src = sharedthis<MElement>();
+                        auto rm = MRequirement::reqidmapping.find(rlink);
+                        if (rm != MRequirement::reqidmapping.end()) {
+                            reqdep->target = rm->second->sharedthis<MElement>();
+                        }
+                        reqdep->Prepare();
+                    }
+                }
+
             }
         }
         //
@@ -1584,11 +1602,10 @@ void CCxxClass::DumpPackageOperationDefinition(std::ostream &src, bool aStatic) 
         if ((mo->visibility == vPackage) && (op->isStatic == aStatic)) {
             //
             //  First dump the header.
-            auto header = op->getHeader(-1);
+            auto header = op->getSourceHeader(0);
             src << header;
 
             std::string pdef=op->GetParameterDefinition(mNameSpace);
-
 
 
             rettype=op->GetReturnType(mNameSpace);
@@ -2049,8 +2066,32 @@ void CCxxClass::Dump(std::shared_ptr<MModel> model) {
     DumpGuardHead(hdr, name, mNameSpace.getString());
     if (!mIsInterface) {
         DumpFileHeader(src, name, ".cpp");
-    }
+        req = false;
 
+        for (auto& s : Supplier) {
+
+            if ((s.getConnector()->type == eElementType::Dependency) && (s.getElement()->type == eElementType::Requirement)) {
+                auto requirement = std::dynamic_pointer_cast<CRequirement>(s.getElement());
+
+                if (!req) {
+                    src << gDoxygenCommentStart << std::endl;
+                    src << gDoxygenCommentStart << " Class Specific Requirements:" << std::endl;
+                    src << gDoxygenCommentStart << std::endl;
+                    req = true;
+                }
+                //
+                //  requirement id
+                src << gDoxygenCommentStart << " [" << helper::toDash(helper::tolower(requirement->name)) << "]" << std::endl;
+
+                auto lines = requirement->GetComment();
+
+                for (auto& l : lines) {
+                    src << gDoxygenCommentStart << " " << l << std::endl;
+                }
+                src << gDoxygenCommentStart << std::endl;
+            }
+        }
+    }
     //
     //  Dump public macros into the header file.
     //  So they are defined where needed.

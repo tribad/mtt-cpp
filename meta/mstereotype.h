@@ -28,6 +28,7 @@ class MStereotype : public MElement
 public:
     MStereotype(const std::string&aName, const std::string&aId, const std::string& aElementType = "");
     static std::shared_ptr<MStereotype> construct(const std::string&aName, const std::string&aId, const std::string& aElementType = "");
+    static std::map<std::string, std::shared_ptr<MStereotype>> byName;
 public:
     std::string elementtype;
 };

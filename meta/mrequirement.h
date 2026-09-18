@@ -21,15 +21,21 @@
 #define MREQUIREMENT_H
 
 #include "melement.h"
-
+//
+//  The requirement text property is ignored as it only exists in StarUML.
+//  So we use the comment field as requirement text.
+//  The kind property gets derived from the stereotype. But the id field is used here. Maybe we do
+//  some similar for the enterprise architect.
 class MRequirement : public MElement
 {
 public:
     MRequirement() = default;
     MRequirement(const std::string& aId, std::shared_ptr<MElement> aParent = nullptr) : MElement(aId, aParent) { type = eElementType::Requirement; }
-    static std::shared_ptr<MRequirement> construct(const std::string& aId, std::shared_ptr<MElement> aParent = nullptr);
+    static std::shared_ptr<MRequirement> construct(const std::string& aId, std::shared_ptr<MStereotype> st, std::shared_ptr<MElement> aParent = nullptr);
+    static std::map<std::string, std::shared_ptr<MRequirement>> reqidmapping;
 public:
     std::string kind;
+    std::string reqid;
 };
 
 #endif // MREQUIREMENT_H

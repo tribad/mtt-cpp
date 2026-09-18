@@ -25,6 +25,14 @@ std::string CRequirement::FQN() const {
 }
 
 void CRequirement::Prepare(void) {
+    MRequirement::reqidmapping.emplace(helper::tolower(reqid), sharedthis<MRequirement>());
+    //
+    //  Recurse into the requirements.
+    auto reqs = getOwned(eElementType::Requirement);
+
+    for (auto r : reqs) {
+        r->Prepare();
+    }
 }
 
 void CRequirement::Dump(std::shared_ptr<MModel> model) {

@@ -38,6 +38,8 @@ public:
     virtual void Dump(std::shared_ptr<MModel> aModel);
 public:
     std::string mLevel;
+    std::string mVerificationMethod;
+    std::string mVerificationCriteria;
 };
 
 

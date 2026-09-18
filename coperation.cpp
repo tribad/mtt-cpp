@@ -67,6 +67,27 @@ std::string COperation::FQN() const {
 }
 
 void COperation::Prepare(void) {
+    std::string reqlink = helper::tolower(GetTaggedValue("Requirements"));
+    //
+    //  Add trace dependencies if we have some requirement ids in the tagged value.
+    if (!reqlink.empty()) {
+        auto rlinklist = helper::tokenize(reqlink, " \t\n");
+        for (auto & rlink : rlinklist) {
+            auto stt = MStereotype::byName.find("trace");
+            if (stt != MStereotype::byName.end()) {
+                auto reqdep = MDependency::construct(id+"-"+rlink, stt->second, sharedthis<MElement>());
+                if (reqdep) {
+                    reqdep->src = sharedthis<MElement>();
+                    auto rm = MRequirement::reqidmapping.find(rlink);
+                    if (rm != MRequirement::reqidmapping.end()) {
+                        reqdep->target = rm->second->sharedthis<MElement>();
+                    }
+                    reqdep->Prepare();
+                }
+            }
+
+        }
+    }
 
     if (HasStereotype("Slot")) {
         qtSlot = true;

@@ -19,10 +19,15 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "mrequirement.h"
 #include "crequirement.h"
+#include "mstereotype.h"
 
-std::shared_ptr<MRequirement> MRequirement::construct(const std::string& aId, std::shared_ptr<MElement> aParent)
+std::map<std::string, std::shared_ptr<MRequirement>> MRequirement::reqidmapping;
+
+std::shared_ptr<MRequirement> MRequirement::construct(const std::string& aId, std::shared_ptr<MStereotype> st, std::shared_ptr<MElement> aParent)
 {
     auto retval = new CRequirement(aId, aParent);
+
+    retval->kind = st->name;
 
     return retval->sharedthis<MRequirement>();
 }

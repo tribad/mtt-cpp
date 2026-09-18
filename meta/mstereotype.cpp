@@ -19,16 +19,20 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "mstereotype.h"
 
+std::map<std::string, std::shared_ptr<MStereotype>> MStereotype::byName;
+
 MStereotype::MStereotype(const std::string &aName, const std::string &aId, const std::string &aElementType) :
              MElement(aId, std::shared_ptr<MElement>()){
     name        = aName;
     elementtype = aElementType;
     type = eElementType::Stereotype;
+    byName.emplace(aName, sharedthis<MStereotype>());
 }
 
 std::shared_ptr<MStereotype>
 MStereotype::construct(const std::string &aName, const std::string &aId, const std::string &aElementType) {
     auto newstt = new MStereotype(aName, aId, aElementType);
 
+    byName.emplace(aName, newstt->sharedthis<MStereotype>());
     return newstt->sharedthis<MStereotype>();
 }
