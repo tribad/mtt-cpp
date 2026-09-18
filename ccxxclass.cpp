@@ -968,10 +968,6 @@ void CCxxClass::DumpOperationDecl(std::ostream& hdr, int indent) {
                 if ((op->isStatic) && (!mIsInterface)) {
                     hdr << "static ";
                 }
-                if ((mIsInterface && !op->isAbstract) || (op->isInline)) {
-                    hdr << "inline ";
-                    op->isInline = true;
-                }
 
                 if ((op->isAbstract) || ((op->name == "~"+name) && HasAnyVirtuals()) || (mIsInterface && (op->name != mTypeTree.mName))) {
                     hdr << "virtual ";
@@ -2459,6 +2455,11 @@ void CCxxClass::DumpInlineOperations(std::ostream &hdr) {
                     if (op->isTemplateOperation()) {
                         op->DumpTemplateOperationPrefix(hdr, true);
                     }
+                    if ((mIsInterface && !op->isAbstract) || (op->isInline)) {
+                        hdr << "inline ";
+                        op->isInline = true;
+                    }
+
                     rettype=op->GetReturnType(mNameSpace);
                     if ((!rettype.empty()) && (rettype.at(rettype.size()-1)== '&')) {
                         rettype=rettype.substr(0, rettype.size()-1);
