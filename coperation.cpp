@@ -861,7 +861,7 @@ std::string COperation::getHeader(int indent) {
             auto requirement = std::dynamic_pointer_cast<CRequirement>(s.getElement());
 
             if (!req) {
-                oss << filler << gDoxygenCommentStart << std::endl;
+                //oss << filler << gDoxygenCommentStart << std::endl;
                 oss << filler << gDoxygenCommentStart << " @coversreqs\n";
                 req = true;
             }
@@ -873,7 +873,7 @@ std::string COperation::getHeader(int indent) {
     if (req) {
         oss << filler << gDoxygenCommentStart << " @endcoversreqs\n";
     }
-
+    oss << filler << gDoxygenCommentStart << std::endl;
     return oss.str();
 }
 
@@ -1016,7 +1016,7 @@ std::string COperation::getSourceHeader(int indent) {
             auto requirement = std::dynamic_pointer_cast<CRequirement>(s.getElement());
 
             if (!req) {
-                oss << filler << gDoxygenCommentStart << std::endl;
+                //oss << filler << gDoxygenCommentStart << std::endl;
                 req = true;
             }
             //

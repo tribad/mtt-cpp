@@ -849,7 +849,7 @@ void CCxxClass::DumpPackageOperationDecl(std::ostream& hdr) {
             std::string pdecl = op->GetParameterDecl(mNameSpace);
             if (dump) {
                 dump = false;
-                hdr << "//\n//  These are the operations defined with package scope.\n";
+                //hdr << "//\n//  These are the operations defined with package scope.\n";
             }
             if (op->HasStereotype("CLinkage")) {
                 hdr << "extern \"C\" ";
@@ -2060,7 +2060,7 @@ void CCxxClass::Dump(std::shared_ptr<MModel> model) {
         }
     }
     if (req) {
-        hdr << gDoxygenCommentStart << " @endcoversreqs\n";
+        hdr << gDoxygenCommentStart << " @endcoversreqs\n" << gDoxygenCommentStart << "\n";
     }
 
     DumpGuardHead(hdr, name, mNameSpace.getString());
